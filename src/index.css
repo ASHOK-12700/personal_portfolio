@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .glassmorphism {
+    @apply bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg border border-white border-opacity-20 shadow-xl;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+    background-color: #111827; /* gray-900 */
+    color: white;
+}
