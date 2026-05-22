@@ -1,202 +1,270 @@
-
-import { useRef, useState, FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, Download, Loader2 } from 'lucide-react';
+import React, { useRef, useState, FormEvent, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Phone, MapPin, Send, Download, Loader2, ArrowUp } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { useScroll } from './ScrollContainer';
 
-const Contact = () => {
-    const formRef = useRef<HTMLFormElement>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
-        type: null,
-        message: ''
-    });
+export const Contact: React.FC = () => {
+  const { scrollToSection } = useScroll();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
+    type: null,
+    message: ''
+  });
 
-    const sendEmail = (e: FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setStatus({ type: null, message: '' });
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
-        if (!formRef.current) return;
+  const sendEmail = (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setStatus({ type: null, message: '' });
 
-        // Replace these with your actual EmailJS credentials
-        // It's best practice to use environment variables
-        const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
-        const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
-        const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+    if (!formRef.current) return;
 
-        if (serviceId === 'YOUR_SERVICE_ID' || templateId === 'YOUR_TEMPLATE_ID' || publicKey === 'YOUR_PUBLIC_KEY') {
-            setStatus({
-                type: 'error',
-                message: 'Please configure your EmailJS credentials in the .env file.'
-            });
-            setIsLoading(false);
-            return;
-        }
+    // EmailJS credentials lookup
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
 
-        emailjs.sendForm(serviceId, templateId, formRef.current, publicKey)
-            .then((result) => {
-                console.log(result.text);
-                setStatus({
-                    type: 'success',
-                    message: 'Message sent successfully! I will get back to you soon.'
-                });
-                formRef.current?.reset();
-            }, (error) => {
-                console.log(error.text);
-                setStatus({
-                    type: 'error',
-                    message: `Failed to send message: ${error.text || 'Unknown error'}. Please try again.`
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    };
+    if (serviceId === 'YOUR_SERVICE_ID' || templateId === 'YOUR_TEMPLATE_ID' || publicKey === 'YOUR_PUBLIC_KEY') {
+      // Elegant warning instead of a crash, prompting them to set env variables
+      setStatus({
+        type: 'error',
+        message: 'Telemetry keys offline. Please configure VITE_EMAILJS service, template, and public key variables inside your .env configuration.'
+      });
+      setIsLoading(false);
+      return;
+    }
 
-    return (
-        <section id="contact" className="py-20 bg-gray-800 relative overflow-hidden">
-            {/* Decorative circles */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+    emailjs.sendForm(serviceId, templateId, formRef.current, publicKey)
+      .then(() => {
+        setStatus({
+          type: 'success',
+          message: 'Message transmitted successfully.'
+        });
+        formRef.current?.reset();
+      }, (error) => {
+        setStatus({
+          type: 'error',
+          message: `Transmission failure: ${error.text || 'Unknown Error'}. Please retry.`
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-4xl font-bold mb-6 text-white">Get In Touch</h2>
-                    <p className="text-gray-400 max-w-2xl mx-auto">
-                        Looking to connect or collaborate? Get in touch to discuss projects, ideas, or opportunities. I’m always open to building meaningful, innovative, and impactful digital experiences together.
-                    </p>
-                </motion.div>
+  return (
+    <div className="w-full h-full flex flex-col justify-between items-center px-6 md:px-12 py-10 relative z-10 text-gray-100 select-none">
+      
+      {/* Top spacing helper */}
+      <div className="h-16" />
 
-                <div className="grid lg:grid-cols-2 gap-12">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-gray-900 p-8 rounded-2xl shadow-xl"
-                    >
-                        <h3 className="text-2xl font-bold text-white mb-8">Contact Information</h3>
+      {/* Main Container */}
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 my-auto z-10 items-center">
+        
+        {/* Left Side: Telemetry / Coordinates Data */}
+        <div className="lg:col-span-5 flex flex-col text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="text-xs uppercase tracking-cinematic text-gray-400 font-semibold mb-3"
+          >
+            04. Ending Scene
+          </motion.div>
+          
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans"
+          >
+            Get In Touch
+          </motion.h2>
 
-                        <div className="space-y-6">
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-blue-500/20 rounded-lg text-blue-400">
-                                    <Mail size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm">Email Me</p>
-                                    <a href="mailto:ashoksriivassivakiran.143@gmail.com" className="text-white hover:text-blue-400 transition-colors block">
-                                        ashoksriivassivakiran.143@gmail.com
-                                    </a>
-                                    <a href="mailto:ashoksriivassivakiran@gmail.com" className="text-white hover:text-blue-400 transition-colors block">
-                                        ashoksriivassivakiran@gmail.com
-                                    </a>
-                                </div>
-                            </div>
+          {/* Telemetry coordinate details */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="space-y-4 mb-8 text-xs sm:text-sm text-gray-400 font-light max-w-md mx-auto lg:mx-0"
+          >
+            {/* Email block */}
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
+                <Mail size={16} />
+              </div>
+              <div className="text-left font-mono">
+                <p className="text-[9px] uppercase tracking-widest text-gray-500">EMAIL CHANNEL</p>
+                <a href="mailto:ashoksriivassivakiran.143@gmail.com" className="text-gray-300 hover:text-white transition-colors block text-[11px] sm:text-xs">
+                  ashoksriivassivakiran.143@gmail.com
+                </a>
+              </div>
+            </div>
 
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-green-500/20 rounded-lg text-green-400">
-                                    <Phone size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm">Call Me</p>
-                                    <p className="text-white">9581720429</p>
-                                    <p className="text-white">9966575468</p>
-                                </div>
-                            </div>
+            {/* Phone block */}
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
+                <Phone size={16} />
+              </div>
+              <div className="text-left font-mono">
+                <p className="text-[9px] uppercase tracking-widest text-gray-500">VOICE MATRIX</p>
+                <p className="text-gray-300 text-[11px] sm:text-xs">+91 95817 20429 / +91 99665 75468</p>
+              </div>
+            </div>
 
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-purple-500/20 rounded-lg text-purple-400">
-                                    <MapPin size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm">Location</p>
-                                    <p className="text-white">East Godavari District, Andhra Pradesh (near Yanam)</p>
-                                </div>
-                            </div>
-                        </div>
+            {/* Geo block */}
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
+                <MapPin size={16} />
+              </div>
+              <div className="text-left font-mono">
+                <p className="text-[9px] uppercase tracking-widest text-gray-500">COORDINATES</p>
+                <p className="text-gray-300 text-[11px] sm:text-xs">East Godavari, AP, IN</p>
+                <p className="text-[9px] text-gray-500 font-mono">[GEO // 16.7335° N, 82.2144° E]</p>
+              </div>
+            </div>
+          </motion.div>
 
-                        <div className="mt-12">
-                            <a
-                                href="https://github.com/ASHOK-12700/my-vault.git"
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-bold hover:shadow-lg hover:shadow-blue-500/30 transition-all hover:-translate-y-1 w-full justify-center sm:w-auto"
-                            >
-                                <Download size={20} />
-                                view my resume
-                            </a>
-                        </div>
-                    </motion.div>
+          {/* Resume button */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.35 }}
+            className="flex justify-center lg:justify-start"
+          >
+            <a
+              href="https://github.com/ASHOK-12700/my-vault.git"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="magnetic px-8 py-3.5 bg-white text-black hover:bg-gray-200 rounded-full text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95 inline-flex items-center gap-2"
+              data-cursor-label="Resume"
+            >
+              <Download size={14} />
+              <span>View My Resume</span>
+            </a>
+          </motion.div>
+        </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-gray-900 p-8 rounded-2xl shadow-xl"
-                    >
-                        <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
-                            <div>
-                                <label className="block text-gray-400 mb-2 text-sm">Your Name</label>
-                                <input
-                                    type="text"
-                                    name="user_name"
-                                    required
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                    placeholder="Enter your name "
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 mb-2 text-sm">Your Email</label>
-                                <input
-                                    type="email"
-                                    name="user_email"
-                                    required
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 mb-2 text-sm">Message</label>
-                                <textarea
-                                    name="message"
-                                    required
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors h-32"
-                                    placeholder="Write some short description for you"
-                                ></textarea>
-                            </div>
+        {/* Right Side: Sleek Contact Form */}
+        <div className="lg:col-span-7 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="glass-panel border border-white/5 bg-[#08080a]/60 p-6 sm:p-8 rounded-3xl w-full text-left"
+          >
+            <form ref={formRef} onSubmit={sendEmail} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Your Identity</label>
+                <input
+                  type="text"
+                  name="user_name"
+                  required
+                  placeholder="Enter your name"
+                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                />
+              </div>
 
-                            {status.message && (
-                                <div className={`p-4 rounded-lg ${status.type === 'success' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                                    {status.message}
-                                </div>
-                            )}
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Email Channel</label>
+                <input
+                  type="email"
+                  name="user_email"
+                  required
+                  placeholder="Enter your email address"
+                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                />
+              </div>
 
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full bg-white text-gray-900 font-bold py-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 size={20} className="animate-spin" />
-                                        Sending...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send size={20} />
-                                        Send Message
-                                    </>
-                                )}
-                            </button>
-                        </form>
-                    </motion.div>
-                </div>
-            </div >
-        </section >
-    );
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Subject Matrix</label>
+                <input
+                  type="text"
+                  name="user_subject"
+                  required
+                  placeholder="Enter message subject"
+                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Transmission Description</label>
+                <textarea
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder="Write a message or project brief..."
+                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 h-28 resize-none font-sans"
+                />
+              </div>
+
+              {/* Status Alert */}
+              <AnimatePresence mode="wait">
+                {status.message && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className={`p-3.5 rounded-xl text-xs font-light leading-snug font-mono ${
+                      status.type === 'success' ? 'bg-white/5 border border-white/10 text-white' : 'bg-red-950/20 border border-red-900/30 text-red-400'
+                    }`}
+                  >
+                    {status.message}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Action Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="magnetic w-full py-3.5 bg-white text-black hover:bg-gray-200 transition-colors rounded-full text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-95"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin text-black" />
+                    <span>Broadcasting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={14} className="text-black" />
+                    <span>Send Message</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </motion.div>
+        </div>
+
+      </div>
+
+      {/* Floating restart indicator */}
+      <motion.button
+        onClick={() => scrollToSection(0)}
+        whileHover={reduceMotion ? {} : { y: -4 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-colors duration-300 font-sans text-[9px] uppercase tracking-cinematic py-2 z-10 group cursor-pointer"
+      >
+        <ArrowUp size={12} className="text-white/50 group-hover:text-white transition-colors duration-300" />
+        <span>Return to Begin</span>
+      </motion.button>
+
+    </div>
+  );
 };
-
 export default Contact;

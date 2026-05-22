@@ -1,103 +1,284 @@
-import { useEffect, useState } from 'react';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Github, Linkedin, Mail, ArrowDown } from 'lucide-react';
+import { useScroll } from './ScrollContainer';
+import gsap from 'gsap';
 
-const roles = ['Web Developer', 'Creative Designer', 'DevOps Enthusiast', 'CSE Student', 'EC2 service', 'S3 service', 'AWS solution architecture', 'AWS cloud engineer'];
+const roles = [
+  'Web Developer',
+  'Creative Designer',
+  'DevOps Enthusiast',
+  'CSE Student',
+  'AWS Cloud Engineer',
+  'AWS Solution Architecture'
+];
 
-const Hero = () => {
-    const [currentRole, setCurrentRole] = useState(0);
+export const Hero: React.FC = () => {
+  const { scrollToSection } = useScroll();
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const cardOuterRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentRole((prev) => (prev + 1) % roles.length);
-        }, 3000);
-        return () => clearInterval(timer);
-    }, []);
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
-    return (
-        <section id="home" className="min-h-screen relative overflow-hidden bg-gray-950 flex items-center justify-center pt-20">
+  // Loop through roles with a cinematic slow reveal
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 3800);
+    return () => clearInterval(timer);
+  }, []);
 
-            {/* Background overlay */}
-            <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
+  // High-performance 3D Mouse Tilt Card effect (disabled in reduced motion)
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduceMotion) return;
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    const card = cardRef.current;
+    if (!card) return;
 
-                {/* Left Side: Text Content */}
-                <div className="text-center md:text-left order-2 md:order-1">
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 text-white">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-                            Ashok Srinivas
-                        </span>
-                        <br />
-                        <span className="text-4xl md:text-6xl text-gray-300">Siva Kiran</span>
-                    </h1>
+    const rect = card.getBoundingClientRect();
+    
+    // Calculate relative mouse coordinates (-0.5 to 0.5 range)
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-                    <div className="text-2xl md:text-3xl font-medium text-blue-300 mb-6 h-12 flex items-center justify-center md:justify-start">
-                        <span className="mr-2">I am a</span>
-                        <span className="text-purple-400 overflow-hidden whitespace-nowrap border-r-4 border-purple-400 pr-1 animate-typing">
-                            {roles[currentRole]}
-                        </span>
-                    </div>
+    // Tilt angle controls (restrained values)
+    const tiltX = y * -12; 
+    const tiltY = x * 12;  
 
-                    <p className="text-lg md:text-xl text-gray-400 font-light mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
-                        Passionate Computer Science Engineering student crafting digital experiences with <span className="text-blue-400 font-medium">web development</span>, <span className="text-purple-400 font-medium">design</span>, and <span className="text-green-400 font-medium">DevOps</span>.
-                    </p>
+    gsap.to(card, {
+      rotateX: tiltX,
+      rotateY: tiltY,
+      transformPerspective: 1000,
+      scale: 1.02,
+      duration: 0.3,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mb-8">
-                        <a
-                            href="#portfolio"
-                            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full font-semibold hover:scale-105 transition-transform shadow-lg shadow-blue-500/25 text-white"
-                        >
-                            View My Work
-                        </a>
-                        <a
-                            href="#contact"
-                            className="px-8 py-3 border border-gray-700 bg-gray-800/50 hover:bg-gray-800 rounded-full font-semibold transition-all text-white backdrop-blur-sm"
-                        >
-                            Get In Touch
-                        </a>
-                    </div>
+    // Shadow & reflection lighting drift
+    gsap.to(card, {
+      boxShadow: `${-x * 30}px ${-y * 30}px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 255, 255, 0.03)`,
+      duration: 0.3
+    });
+  };
 
-                    <div className="flex justify-center md:justify-start gap-6">
-                        <a href="https://github.com/ashok-12700" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white hover:scale-110 transition-all">
-                            <Github size={24} />
-                        </a>
-                        <a href="https://linkedin.com/in/ashoksrinivassivakiran" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white hover:scale-110 transition-all">
-                            <Linkedin size={24} />
-                        </a>
-                        <a href="mailto:ashoksrinivassivakiran.143@gmail.com" className="text-gray-400 hover:text-white hover:scale-110 transition-all">
-                            <Mail size={24} />
-                        </a>
-                    </div>
-                </div>
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    if (!card) return;
 
-                {/* Right Side: Interactive Image Card */}
-                <div className="flex items-center justify-center order-1 md:order-2 perspective-1000">
-                    <div className="group relative w-72 h-[450px] md:w-80 md:h-[500px] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2">
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.8)',
+      duration: 0.5,
+      ease: 'power3.out',
+      overwrite: 'auto'
+    });
+  };
 
-                        {/* Image Container with Gradient Border Effect */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
+  return (
+    <div className="w-full h-full flex flex-col justify-between items-center px-6 md:px-12 py-12 relative z-10 text-gray-100 select-none">
+      
+      {/* Dynamic ambient spotlight backlighting - restrained */}
+      {!reduceMotion && (
+        <div className="absolute top-1/2 left-1/3 w-[500px] h-[500px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 bg-white/[0.01] blur-[150px] z-0" />
+      )}
 
-                        <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-2xl bg-gray-800 border-2 border-gray-700 group-hover:border-transparent transition-colors duration-300">
-                            {/* Gradient Overlay on Hover */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 via-transparent to-blue-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+      {/* Top spacing helper */}
+      <div className="h-16" />
 
-                            <img
-                                src="https://i.postimg.cc/SND65KHx/my-photo.jpg"
-                                alt="Ashok Srinivas Siva Kiran"
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
+      {/* Hero content grid */}
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-6 items-center my-auto z-10">
+        
+        {/* Left Side: Typography Identity */}
+        <div className="col-span-1 md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left">
+          
+          {/* Tagline */}
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="text-xs uppercase tracking-cinematic text-gray-400 font-semibold mb-4"
+          >
+            Creative Developer & DevOps Engineer
+          </motion.div>
 
-                            {/* Text overlay on image (optional, adds more 3D feel) */}
-                            <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20">
-                                <p className="text-white font-bold text-lg">Ashok Srinivas</p>
-                                <p className="text-blue-300 text-sm">Passionating on Devops with AWS</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          {/* Luxury cinematic headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 flex flex-col gap-1 leading-none text-white font-sans">
+            <motion.span
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-clip-text text-transparent bg-gradient-to-r from-gray-100 via-gray-200 to-gray-400"
+            >
+              Ashok Srinivas
+            </motion.span>
+            <motion.span
+              initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-400 tracking-wide-luxury"
+            >
+              Siva Kiran
+            </motion.span>
+          </h1>
+
+          {/* Animated active role indicator */}
+          <div className="h-10 flex items-center mb-6 overflow-hidden text-lg sm:text-xl md:text-2xl font-light text-gray-300">
+            <span className="text-gray-500 mr-2.5 font-sans">Specializing in</span>
+            <div className="relative h-full flex flex-col justify-center">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={roleIndex}
+                  initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-medium text-white"
+                >
+                  {roles[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
             </div>
-        </section>
-    );
-};
+          </div>
 
+          {/* Description */}
+          <motion.p
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-sm sm:text-base text-gray-400 leading-relaxed max-w-lg mb-8 font-light"
+          >
+            Crafting elegant digital environments combining modern{' '}
+            <span className="text-white font-medium">web design</span>, dynamic interactive mechanics, and robust{' '}
+            <span className="text-white font-medium">DevOps infrastructure</span>.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"
+          >
+            <button
+              onClick={() => scrollToSection(3)}
+              className="magnetic px-8 py-3 bg-white text-black hover:bg-gray-200 rounded-full text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95"
+              data-cursor-label="Explore"
+            >
+              View My Work
+            </button>
+            <button
+              onClick={() => scrollToSection(4)}
+              className="magnetic px-8 py-3 border border-white/5 bg-white/5 hover:bg-white/10 rounded-full text-xs uppercase tracking-wider font-bold text-gray-200 transition-all duration-200 backdrop-blur-md active:scale-95"
+            >
+              Get In Touch
+            </button>
+          </motion.div>
+
+          {/* Social connections */}
+          <motion.div
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="flex gap-6 text-gray-400"
+          >
+            <a
+              href="https://github.com/ashok-12700"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
+            >
+              <Github size={18} />
+            </a>
+            <a
+              href="https://linkedin.com/in/ashoksrinivassivakiran"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
+            >
+              <Linkedin size={18} />
+            </a>
+            <a
+              href="mailto:ashoksrinivassivakiran.143@gmail.com"
+              className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
+            >
+              <Mail size={18} />
+            </a>
+          </motion.div>
+
+        </div>
+
+        {/* Right Side: Immersive 3D Tilt Card Frame */}
+        <div 
+          ref={cardOuterRef}
+          className="col-span-1 md:col-span-5 flex items-center justify-center py-6 perspective-1000 z-10"
+        >
+          <motion.div
+            initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className="group relative w-64 h-96 sm:w-72 sm:h-[420px] rounded-3xl overflow-hidden glass-panel border border-white/10 shadow-2xl flex flex-col justify-end p-6 cursor-pointer"
+            style={{ 
+              transformStyle: reduceMotion ? 'flat' : 'preserve-3d',
+              willChange: 'transform'
+            }}
+          >
+            {/* Absolute Background Image inside Card */}
+            <div 
+              className="absolute inset-0 w-full h-full pointer-events-none group-hover:scale-105 transition-transform duration-700 ease-out select-none"
+              style={{ transform: reduceMotion ? 'none' : 'translateZ(-10px)' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 z-10" />
+              <img
+                src="https://i.postimg.cc/SND65KHx/my-photo.jpg"
+                alt="Ashok Srinivas Siva Kiran"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Glowing borders on hover - monochrome */}
+            <div className="absolute inset-0 w-full h-full pointer-events-none border border-transparent group-hover:border-white/10 transition-colors duration-500 rounded-3xl z-20" />
+
+            {/* Layered Text Reveal on Image */}
+            <div 
+              className="relative z-20 transition-all duration-300 group-hover:translate-y-[-5px]"
+              style={{ transform: reduceMotion ? 'none' : 'translateZ(20px)' }}
+            >
+              <p className="text-white font-bold text-lg tracking-wide">Ashok Srinivas</p>
+              <p className="text-xs text-gray-400 font-medium font-sans">Passionating on DevOps with AWS</p>
+            </div>
+          </motion.div>
+        </div>
+
+      </div>
+
+      {/* Floating Next Experience indicator */}
+      <motion.button
+        onClick={() => scrollToSection(1)}
+        initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={reduceMotion ? { duration: 0.1 } : { duration: 0.8, delay: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+        className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-colors duration-300 font-sans text-[9px] uppercase tracking-cinematic py-2 z-10"
+      >
+        <span>Next Experience</span>
+        <ArrowDown size={12} className="text-white/60" />
+      </motion.button>
+
+    </div>
+  );
+};
 export default Hero;

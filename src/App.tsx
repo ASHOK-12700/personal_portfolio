@@ -1,24 +1,25 @@
 
-import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
 import Portfolio from './components/Portfolio';
-import Education from './components/Education';
 import Contact from './components/Contact';
+import ScrollContainer from './components/ScrollContainer';
+import CinematicLayout from './components/CinematicLayout';
 
 function App() {
-    return (
-        <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
-            <Navbar />
-            <Hero />
-            <About />
-            <Skills />
-            <Portfolio />
-            <Education />
-            <Contact />
-        </div>
-    );
+  return (
+    <CinematicLayout>
+      <ScrollContainer>
+        <Hero />
+        <About />
+        <Skills />
+        <Portfolio />
+        <Contact />
+      </ScrollContainer>
+    </CinematicLayout>
+  );
 }
 
 export default App;
+
