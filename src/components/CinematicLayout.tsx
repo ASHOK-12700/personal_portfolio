@@ -11,6 +11,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const parallaxLayerRef = useRef<HTMLDivElement>(null);
   
   const [isMobile, setIsMobile] = useState(true);
   const [cursorLabel, setCursorLabel] = useState('');
@@ -60,6 +61,9 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
     const spotlightX = gsap.quickTo(spotlightRef.current, 'x', { duration: 0.6, ease: 'power2.out' });
     const spotlightY = gsap.quickTo(spotlightRef.current, 'y', { duration: 0.6, ease: 'power2.out' });
 
+    const parallaxX = gsap.quickTo(parallaxLayerRef.current, 'x', { duration: 1.5, ease: 'power2.out' });
+    const parallaxY = gsap.quickTo(parallaxLayerRef.current, 'y', { duration: 1.5, ease: 'power2.out' });
+
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       
@@ -73,6 +77,12 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       // Update spotlight position
       spotlightX(clientX);
       spotlightY(clientY);
+
+      // Update parallax layer coordinates (very subtle shifting)
+      const pX = (clientX - window.innerWidth / 2) * 0.02;
+      const pY = (clientY - window.innerHeight / 2) * 0.02;
+      parallaxX(pX);
+      parallaxY(pY);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -90,17 +100,18 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
           setCursorLabel(label);
         }
 
-        // Apply luxury monochrome feedback to cursor (scale to 1.4)
+        // Apply luxury monochrome feedback to cursor (scale to 2.0 for spotlight expansion)
         gsap.to(cursorRingRef.current, {
-          scale: 1.4,
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          borderColor: 'rgba(255, 255, 255, 0.4)',
+          scale: 2.0,
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          borderColor: 'rgba(255, 255, 255, 0.5)',
           borderWidth: '1px',
           duration: 0.2,
           overwrite: 'auto'
         });
         gsap.to(cursorDotRef.current, {
-          scale: 0.5,
+          scale: 0,
+          opacity: 0,
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           duration: 0.2,
           overwrite: 'auto'
@@ -142,6 +153,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
         });
         gsap.to(cursorDotRef.current, {
           scale: 1,
+          opacity: 1,
           backgroundColor: 'rgb(243, 244, 246)',
           duration: 0.25,
           overwrite: 'auto'
@@ -181,12 +193,48 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       {/* Cinematic Vignette Overlay */}
       <div className="cinematic-vignette" />
 
-      {/* Ambient static lighting fallback or slow floating orbs (disabled in reduced motion) */}
+      {/* Animated Gradient Mesh System Background */}
       {!reduceMotion && (
-        <>
-          <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vh] rounded-full ambient-glow-blue pointer-events-none z-0" />
-          <div className="absolute bottom-1/4 right-1/4 w-[60vw] h-[60vh] rounded-full ambient-glow-purple pointer-events-none z-0" />
-        </>
+        <div className="gradient-mesh">
+          <div className="gradient-mesh-orb mesh-orb-1" />
+          <div className="gradient-mesh-orb mesh-orb-2" />
+          <div className="gradient-mesh-orb mesh-orb-3" />
+          <div className="gradient-mesh-orb mesh-orb-4" />
+        </div>
+      )}
+
+      {/* 3D Parallax Ambient Depth Layer (12-18 particles max global backdrop particles) */}
+      {!reduceMotion && (
+        <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
+          {Array.from({ length: 15 }).map((_, i) => {
+            const size = i % 3 === 0 ? 'w-1 h-1' : i % 3 === 1 ? 'w-1.5 h-1.5' : 'w-2 h-2';
+            const blur = i % 2 === 0 ? 'blur-[0.5px]' : 'blur-[1px]';
+            const anim = i % 3 === 0 ? 'animate-particle-1' : i % 3 === 1 ? 'animate-particle-2' : 'animate-particle-3';
+            const top = `${(i * 7 + 13) % 100}%`;
+            const left = `${(i * 13 + 7) % 100}%`;
+            const delay = `${-(i * 1.5)}s`;
+            return (
+              <div
+                key={i}
+                className={`absolute rounded-full bg-white/20 ${size} ${blur} ${anim}`}
+                style={{
+                  top,
+                  left,
+                  animationDelay: delay,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* 3D Parallax Blurred Ambient Light Orbs */}
+      {!isMobile && !reduceMotion && !isLoading && (
+        <div ref={parallaxLayerRef} className="absolute inset-0 pointer-events-none z-[2] overflow-hidden">
+          <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.03] blur-[150px]" />
+          <div className="absolute bottom-[25%] right-[20%] w-[450px] h-[450px] rounded-full bg-violet-500/[0.025] blur-[160px]" />
+          <div className="absolute top-[55%] left-[65%] w-[350px] h-[350px] rounded-full bg-cyan-500/[0.025] blur-[130px]" />
+        </div>
       )}
 
       {/* Mouse Backlight Spotlight behind typography (monochrome & soft) */}

@@ -5,12 +5,11 @@ import { useScroll } from './ScrollContainer';
 import gsap from 'gsap';
 
 const roles = [
-  'Web Developer',
-  'Creative Designer',
-  'DevOps Enthusiast',
-  'CSE Student',
-  'AWS Cloud Engineer',
-  'AWS Solution Architecture'
+  'Immersive Systems Engineer',
+  'DevOps Specialist',
+  'Cinematic Frontend Developer',
+  'Cloud Architecture Creator',
+  'Modern Interactive Designer'
 ];
 
 export const Hero: React.FC = () => {
@@ -53,6 +52,12 @@ export const Hero: React.FC = () => {
     // Tilt angle controls (restrained values)
     const tiltX = y * -12; 
     const tiltY = x * 12;  
+
+    // Dynamic light reflection coordinates inside card
+    const shineX = e.clientX - rect.left;
+    const shineY = e.clientY - rect.top;
+    card.style.setProperty('--shine-x', `${shineX}px`);
+    card.style.setProperty('--shine-y', `${shineY}px`);
 
     gsap.to(card, {
       rotateX: tiltX,
@@ -123,29 +128,33 @@ export const Hero: React.FC = () => {
             }}
             className="text-xs uppercase tracking-cinematic text-gray-400 font-semibold mb-4"
           >
-            Creative Developer & DevOps Engineer
+            DevOps + Cinematic Frontend Developer
           </motion.div>
 
           {/* Luxury cinematic headline */}
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 flex flex-col gap-1 leading-none text-white font-sans">
-            <motion.span
-              variants={{
-                hidden: { opacity: 0, y: 25 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }
-              }}
-              className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-100 to-gray-300 heading-premium"
-            >
-              Ashok Srinivas
-            </motion.span>
-            <motion.span
-              variants={{
-                hidden: { opacity: 0, y: 25 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }
-              }}
-              className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-400 tracking-wide-luxury"
-            >
-              Siva Kiran
-            </motion.span>
+            <div className="overflow-hidden py-1">
+              <motion.span
+                variants={{
+                  hidden: { opacity: 0, y: "105%" },
+                  visible: { opacity: 1, y: 0, transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } }
+                }}
+                className="block bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-100 to-gray-300 heading-premium"
+              >
+                Ashok Srinivas
+              </motion.span>
+            </div>
+            <div className="overflow-hidden py-1">
+              <motion.span
+                variants={{
+                  hidden: { opacity: 0, y: "105%" },
+                  visible: { opacity: 1, y: 0, transition: { duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] } }
+                }}
+                className="block text-2xl sm:text-3xl md:text-4xl font-light text-gray-400 tracking-wide-luxury"
+              >
+                Siva Kiran
+              </motion.span>
+            </div>
           </h1>
 
           {/* Animated active role indicator */}
@@ -286,6 +295,16 @@ export const Hero: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-90 z-10" />
               {/* Premium cinematic reflection highlight */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-15" />
+              {/* Realistic Glass Shine Spotlight Overlay */}
+              {!reduceMotion && (
+                <div 
+                  className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: `radial-gradient(circle 200px at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255, 255, 255, 0.08), transparent 80%)`,
+                    mixBlendMode: 'overlay',
+                  }}
+                />
+              )}
               <img
                 src="https://i.postimg.cc/SND65KHx/my-photo.jpg"
                 alt="Ashok Srinivas Siva Kiran"

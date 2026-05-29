@@ -58,20 +58,31 @@ export const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 w-full z-[999] py-4 px-6 md:px-12 select-none pointer-events-none">
       <div className="max-w-6xl mx-auto w-full flex justify-between items-center bg-white/[0.04] border border-white/10 backdrop-blur-xl rounded-full py-2.5 px-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto transition-colors duration-300">
         
-        {/* Left Side Logo */}
-        <div 
-          onClick={() => handleNavClick(0)}
-          className="flex items-center gap-2 cursor-pointer group magnetic"
-        >
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-white/10 group-hover:border-white/30 transition-colors duration-500">
-            <img
-              src="https://i.postimg.cc/hGcfBpXG/Gemini-Generated-Image-3a15ma3a15ma3a15.png"
-              alt="Logo"
-              className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-            />
+        {/* Left Side Logo & Telemetry */}
+        <div className="flex items-center gap-4">
+          <div 
+            onClick={() => handleNavClick(0)}
+            className="flex items-center gap-2 cursor-pointer group magnetic pointer-events-auto"
+          >
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-white/10 group-hover:border-white/30 transition-colors duration-500">
+              <img
+                src="https://i.postimg.cc/hGcfBpXG/Gemini-Generated-Image-3a15ma3a15ma3a15.png"
+                alt="Logo"
+                className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+              />
+            </div>
+            <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-white transition-colors duration-300">
+              Ashok <span className="text-gray-400 font-light lowercase">srinivas</span>
+            </div>
           </div>
-          <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-white transition-colors duration-300">
-            Ashok <span className="text-gray-400 font-light lowercase">srinivas</span>
+
+          {/* Subtle Telemetry Beacon */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[8px] font-mono text-gray-500 select-none">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
+            </span>
+            <span>SYS ACTIVE // LATENCY: 24MS</span>
           </div>
         </div>
 

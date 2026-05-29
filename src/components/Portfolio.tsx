@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScroll } from './ScrollContainer';
 import { Github, ExternalLink, Wifi, Trash2, ArrowDown, X, Layers, AlertCircle, Compass } from 'lucide-react';
@@ -45,6 +45,239 @@ const projects = [
     ]
   }
 ];
+
+const WiFiShieldSimulator: React.FC = () => {
+  const [logs, setLogs] = useState<string[]>([
+    '[SYS] Initializing WiFi Shield ESP8266 controller...',
+    '[SYS] Hardware configuration: NodeMCU v1.0. Channels 1-13.',
+    '[SYS] Monitoring 802.11 management frames...',
+    '[SCAN] Channel 1 scan completed. 4 Access Points found.',
+    '[SCAN] Active SSID: SIET_STUDENT_WIFI | RSSI: -62dBm | SEC: WPA2'
+  ]);
+  const [isSniffing, setIsSniffing] = useState(true);
+  const [threatCount, setThreatCount] = useState(0);
+  const terminalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isSniffing) return;
+
+    const logTemplates = [
+      () => `[SCAN] Checking Channel ${(Math.random() * 11 + 1).toFixed(0)}...`,
+      () => `[BEACON] SSID: rogue_unsecured_wifi | RSSI: -48dBm | FLAG: Spoof suspected.`,
+      () => `[SHIELD] DEAUTH PACKET FLURRY DETECTED. Executing interrupt defensive protocols!`,
+      () => `[ALERT] Deauth source identified: MAC [A4:82:C3:E9:10:DF]. Blocking frame injection.`,
+      () => `[SHIELD] Rogue frames discarded at MAC layer. Channel stability restored.`,
+      () => `[SCAN] Active AP list refreshed. SIET_STUDENT_WIFI verified stable.`,
+      () => `[SYS] Recalibrating circular ring buffer. RAM load at 32%. Core temperature normal.`,
+      () => `[MONITOR] Sniffing Probe Request from client MAC [4C:5E:0C:B2:D1:4F]... Encrypting.`,
+      () => `[SHIELD] EVIL TWIN SSID detected matching VSM_College_WiFi. Blocking associations.`
+    ];
+
+    const timer = setInterval(() => {
+      const randomTemplate = logTemplates[Math.floor(Math.random() * logTemplates.length)]();
+      setLogs(prev => {
+        const next = [...prev, randomTemplate];
+        return next.slice(-40);
+      });
+
+      if (randomTemplate.includes('ALERT') || randomTemplate.includes('SHIELD') || randomTemplate.includes('DEAUTH')) {
+        setThreatCount(c => c + 1);
+      }
+    }, 1800);
+
+    return () => clearInterval(timer);
+  }, [isSniffing]);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  return (
+    <div className="w-full glass-panel border border-white/10 rounded-2xl p-5 bg-black/40 text-left font-mono relative overflow-hidden select-none">
+      <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-4 text-[10px]">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isSniffing ? 'bg-emerald-400' : 'bg-red-400'} opacity-75`}></span>
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${isSniffing ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+          </span>
+          <span className="text-white/60 tracking-wider">ESP8266 WIRELESS SHIELD TELEMETRY</span>
+        </div>
+        <button 
+          onClick={() => setIsSniffing(!isSniffing)}
+          className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 text-[9px] uppercase tracking-wider transition-colors cursor-pointer"
+        >
+          {isSniffing ? 'Pause Telemetry' : 'Resume Sniffing'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 mb-4 text-center">
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">DEFENSE MODE</p>
+          <p className="text-xs font-bold text-white tracking-widest mt-0.5 font-mono">ACTIVE</p>
+        </div>
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">THREATS BLOCKED</p>
+          <p className="text-xs font-bold text-emerald-400 mt-0.5 font-mono">{threatCount}</p>
+        </div>
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">SHIELD INTEGRITY</p>
+          <p className="text-xs font-bold text-cyan-400 mt-0.5 font-mono">99.8%</p>
+        </div>
+      </div>
+
+      <div 
+        ref={terminalRef}
+        className="w-full h-40 overflow-y-auto bg-black/60 border border-white/5 rounded-xl p-3.5 space-y-1.5 text-[10px] text-gray-400 leading-normal scrollbar-none font-mono"
+      >
+        {logs.map((log, index) => {
+          let color = 'text-gray-400';
+          if (log.includes('ALERT') || log.includes('DEAUTH')) {
+            color = 'text-red-400 font-semibold';
+          } else if (log.includes('SHIELD')) {
+            color = 'text-cyan-400 font-semibold';
+          } else if (log.includes('SCAN')) {
+            color = 'text-white/60';
+          } else if (log.includes('SYS')) {
+            color = 'text-gray-500';
+          }
+          return (
+            <div key={index} className={`${color} break-all`}>
+              {log}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const CleanCoinSimulator: React.FC = () => {
+  const [balance, setBalance] = useState(12.4);
+  const [load, setLoad] = useState(0.0);
+  const [isCalibrating, setIsCalibrating] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<'plastic' | 'glass' | 'aluminum'>('plastic');
+  const [ledger, setLedger] = useState<Array<{ name: string; weight: number; coins: number; time: string }>>([
+    { name: 'Plastic Bottle', weight: 0.45, coins: 1.35, time: '14:20:05' },
+    { name: 'Aluminum Can', weight: 0.20, coins: 0.80, time: '12:04:12' }
+  ]);
+
+  const items = {
+    plastic: { name: 'Plastic Bottle', weight: 0.40, coins: 1.20, icon: '🥤' },
+    glass: { name: 'Glass Jar', weight: 0.60, coins: 1.80, icon: '🫙' },
+    aluminum: { name: 'Aluminum Can', weight: 0.25, coins: 1.00, icon: '🥫' }
+  };
+
+  const handleDeposit = () => {
+    if (isCalibrating) return;
+    setIsCalibrating(true);
+
+    setTimeout(() => {
+      const active = items[selectedItem];
+      setLoad(active.weight);
+      setBalance(prev => parseFloat((prev + active.coins).toFixed(2)));
+      
+      const now = new Date();
+      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+      
+      setLedger(prev => [
+        {
+          name: active.name,
+          weight: active.weight,
+          coins: active.coins,
+          time: timeStr
+        },
+        ...prev
+      ]);
+      
+      setIsCalibrating(false);
+      
+      setTimeout(() => {
+        setLoad(0.0);
+      }, 3000);
+
+    }, 2000);
+  };
+
+  return (
+    <div className="w-full glass-panel border border-white/10 rounded-2xl p-5 bg-black/40 text-left relative overflow-hidden select-none">
+      <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-4 text-[10px]">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isCalibrating ? 'bg-amber-400' : 'bg-emerald-400'} opacity-75`}></span>
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${isCalibrating ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+          </span>
+          <span className="text-white/60 font-mono tracking-wider">CLEANCOIN IoT CALIBRATION HUB</span>
+        </div>
+        <span className="text-gray-500 font-mono text-[9px] uppercase tracking-wider">NODE ONLINE</span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 mb-4 text-center">
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">LOAD CELL WEIGHT</p>
+          <p className="text-xs font-bold text-white font-mono mt-0.5">
+            {isCalibrating ? 'CALIBRATING...' : `${load.toFixed(2)} kg`}
+          </p>
+        </div>
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">WALLET BALANCE</p>
+          <p className="text-xs font-bold text-emerald-400 font-mono mt-0.5">{balance.toFixed(2)} CC</p>
+        </div>
+        <div className="bg-white/[0.02] border border-white/5 p-2.5 rounded-xl">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">COIN MULTIPLIER</p>
+          <p className="text-xs font-bold text-cyan-400 font-mono mt-0.5">3.00x</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch mb-4">
+        <div className="flex flex-col justify-between space-y-3 bg-white/[0.01] border border-white/5 p-3.5 rounded-xl">
+          <span className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">SELECT RECYCLABLE ITEM</span>
+          <div className="flex justify-between gap-1.5">
+            {(['plastic', 'glass', 'aluminum'] as const).map((type) => (
+              <button
+                key={type}
+                onClick={() => setSelectedItem(type)}
+                className={`flex-1 py-2 text-[10px] font-bold rounded-lg transition-all duration-300 border flex flex-col items-center gap-1 cursor-pointer ${
+                  selectedItem === type 
+                    ? 'bg-white/10 border-white/30 text-white' 
+                    : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className="text-sm">{items[type].icon}</span>
+                <span className="font-sans text-[8px] uppercase tracking-wider">{type}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={handleDeposit}
+            disabled={isCalibrating}
+            className="w-full py-2.5 bg-white text-black hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shadow"
+          >
+            {isCalibrating ? (
+              <span>CALIBRATING LOAD CELLS...</span>
+            ) : (
+              <span>Deposit {items[selectedItem].name}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="flex flex-col space-y-2 bg-white/[0.01] border border-white/5 p-3.5 rounded-xl justify-between">
+          <span className="text-[9px] text-gray-500 uppercase tracking-wider font-sans">RECENT TRANSACTION LEDGER</span>
+          <div className="space-y-1.5 max-h-[85px] overflow-y-auto scrollbar-none text-[9px] font-mono text-gray-400">
+            {ledger.map((item, index) => (
+              <div key={index} className="flex justify-between items-center border-b border-white/[0.02] pb-1">
+                <span className="text-white/60">{item.name}</span>
+                <span className="text-gray-500 font-sans">{item.time}</span>
+                <span className="text-emerald-400">+{item.coins.toFixed(2)} CC</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Portfolio: React.FC = () => {
   const { scrollToSection } = useScroll();
@@ -289,6 +522,18 @@ export const Portfolio: React.FC = () => {
                           </li>
                         ))}
                       </ul>
+                    </div>
+
+                    <div className="pt-4">
+                      <h4 className="text-[11px] uppercase tracking-widest text-white/40 font-bold mb-4 flex items-center gap-2">
+                        <Layers size={12} className="text-white/60" />
+                        <span>Interactive Telemetry Sandbox</span>
+                      </h4>
+                      {selectedProject.title.toLowerCase().includes('security') ? (
+                        <WiFiShieldSimulator />
+                      ) : (
+                        <CleanCoinSimulator />
+                      )}
                     </div>
                   </div>
 

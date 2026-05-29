@@ -131,28 +131,29 @@ export const About: React.FC<{ navigateToCertificates?: () => void }> = ({ navig
         {/* Left Panel: The Story/Identity */}
         <div className="lg:col-span-5 flex flex-col text-center lg:text-left">
           <motion.div
-            initial={reduceMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-xs uppercase tracking-cinematic text-gray-400 font-semibold mb-3"
           >
             01. Personal Identity
           </motion.div>
           <motion.h2
-            initial={reduceMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
           >
             About Me
           </motion.h2>
 
           <motion.div
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+            initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-4 text-xs sm:text-sm paragraph-premium max-w-md mx-auto lg:mx-0"
           >
             <p>
