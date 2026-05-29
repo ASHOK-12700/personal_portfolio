@@ -88,7 +88,7 @@ export const Contact: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
           >
             Get In Touch
           </motion.h2>
@@ -102,7 +102,7 @@ export const Contact: React.FC = () => {
             className="space-y-4 mb-8 text-xs sm:text-sm text-gray-400 font-light max-w-md mx-auto lg:mx-0"
           >
             {/* Email block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
               <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
                 <Mail size={16} />
               </div>
@@ -115,7 +115,7 @@ export const Contact: React.FC = () => {
             </div>
 
             {/* Phone block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
               <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
                 <Phone size={16} />
               </div>
@@ -126,7 +126,7 @@ export const Contact: React.FC = () => {
             </div>
 
             {/* Geo block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/5 bg-[#08080a]/60 hover:border-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.02)] transition-all duration-300">
+            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
               <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
                 <MapPin size={16} />
               </div>
@@ -166,9 +166,12 @@ export const Contact: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="glass-panel border border-white/5 bg-[#08080a]/60 p-6 sm:p-8 rounded-3xl w-full text-left"
+            className="glass-panel p-6 sm:p-8 rounded-3xl w-full text-left relative overflow-hidden"
           >
-            <form ref={formRef} onSubmit={sendEmail} className="space-y-4">
+            {/* Ambient form backlight overlay */}
+            <div className="absolute top-1/2 left-1/2 w-[350px] h-[350px] rounded-full bg-violet-500/5 blur-[80px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-0" />
+
+            <form ref={formRef} onSubmit={sendEmail} className="space-y-4 relative z-10">
               <div>
                 <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Your Identity</label>
                 <input
@@ -176,7 +179,7 @@ export const Contact: React.FC = () => {
                   name="user_name"
                   required
                   placeholder="Enter your name"
-                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
                 />
               </div>
 
@@ -187,7 +190,7 @@ export const Contact: React.FC = () => {
                   name="user_email"
                   required
                   placeholder="Enter your email address"
-                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
                 />
               </div>
 
@@ -198,7 +201,7 @@ export const Contact: React.FC = () => {
                   name="user_subject"
                   required
                   placeholder="Enter message subject"
-                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 font-sans"
+                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
                 />
               </div>
 
@@ -209,7 +212,7 @@ export const Contact: React.FC = () => {
                   required
                   rows={4}
                   placeholder="Write a message or project brief..."
-                  className="w-full bg-black/30 border border-white/5 focus:border-white/20 focus:shadow-[0_0_15px_rgba(255,255,255,0.02)] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:bg-black/50 transition-all duration-300 placeholder-gray-600 h-28 resize-none font-sans"
+                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 h-28 resize-none font-sans relative z-10"
                 />
               </div>
 
@@ -233,7 +236,7 @@ export const Contact: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="magnetic w-full py-3.5 bg-white text-black hover:bg-gray-200 transition-colors rounded-full text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-95"
+                className="magnetic w-full py-3.5 luxury-btn luxury-btn-primary rounded-full text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-95 shadow-md shadow-white/5"
               >
                 {isLoading ? (
                   <>

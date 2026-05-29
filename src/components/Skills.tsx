@@ -77,7 +77,7 @@ export const Skills: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
           >
             Technical Skills
           </motion.h2>
@@ -93,27 +93,30 @@ export const Skills: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: catIdx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="glass-panel border border-white/5 bg-[#08080a]/60 p-5 rounded-2xl flex flex-col text-left transition-all duration-300 hover:border-white/10 hover:shadow-[0_0_25px_rgba(255,255,255,0.02)] group"
+              className="glass-panel p-5 rounded-2xl flex flex-col text-left transition-all duration-500 hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(6,182,212,0.02)] group relative overflow-hidden"
             >
+              {/* Subtle tech backlight */}
+              <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-cyan-500/5 blur-2xl pointer-events-none group-hover:bg-cyan-500/10 transition-colors duration-500" />
+
               {/* Category Header */}
-              <div className="flex items-center gap-3 mb-4 pb-2 border-b border-white/5">
-                <category.icon size={18} className="flex-shrink-0 text-white/40 group-hover:text-white/80 transition-colors duration-300" />
+              <div className="relative z-10 flex items-center gap-3 mb-4 pb-2 border-b border-white/5">
+                <category.icon size={18} className="flex-shrink-0 text-white/40 group-hover:text-cyan-400 transition-colors duration-300" />
                 <h3 className="text-sm uppercase tracking-widest font-bold text-white/70 group-hover:text-white transition-colors duration-300">{category.title}</h3>
               </div>
 
               {/* Skills Chips Grid */}
-              <div className="flex flex-wrap gap-2.5">
+              <div className="relative z-10 flex flex-wrap gap-2.5">
                 {category.skills.map((skill, skillIdx) => (
                   <motion.div
                     key={skillIdx}
                     whileHover={{ 
-                      scale: 1.03,
-                      boxShadow: '0 0 15px rgba(255, 255, 255, 0.05)',
-                      borderColor: 'rgba(255,255,255,0.15)',
-                      backgroundColor: 'rgba(255,255,255,0.03)'
+                      scale: 1.04,
+                      boxShadow: '0 0 15px rgba(6, 182, 212, 0.15)',
+                      borderColor: 'rgba(6, 182, 212, 0.4)',
+                      backgroundColor: 'rgba(6, 182, 212, 0.04)'
                     }}
-                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="interactive-card px-4 py-2 border border-white/5 bg-black/40 backdrop-blur-md rounded-xl flex flex-col justify-center cursor-default transition-all duration-300 relative group"
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="interactive-card px-4 py-2 border border-white/10 bg-white/[0.03] backdrop-blur-md rounded-xl flex flex-col justify-center cursor-default transition-all duration-300 relative group shadow-[inset_0_1px_0px_rgba(255,255,255,0.05)]"
                   >
                     <span className="text-[11px] sm:text-xs font-semibold text-gray-300 transition-colors group-hover:text-white">
                       {skill.name}

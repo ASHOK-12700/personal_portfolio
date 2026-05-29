@@ -13,7 +13,23 @@ const ScrollContext = createContext<ScrollContextType | null>(null);
 export const useScroll = () => {
   const context = useContext(ScrollContext);
   if (!context) {
-    throw new Error('useScroll must be used within a ScrollContainer');
+    // Return fallback to prevent crashing when rendered outside ScrollContainer (e.g. on deep pages)
+    return {
+      activeSection: -1,
+      scrollToSection: (index: number) => {
+        // Fallback action: if certificates page, go back to landing page and save target index
+        const hash = window.location.hash;
+        const path = window.location.pathname;
+        const isCertificatesPage = hash === '#/certificates' || hash === '#/certifications' || path === '/certificates' || path === '/certifications';
+        if (isCertificatesPage) {
+          sessionStorage.setItem('scrollTargetSection', String(index));
+          window.location.hash = '';
+          window.history.pushState(null, '', '/');
+          window.dispatchEvent(new Event('popstate'));
+        }
+      },
+      sectionsCount: 5
+    };
   }
   return context;
 };
@@ -24,16 +40,16 @@ interface ScrollContainerProps {
 
 const getLightingBackground = (index: number) => {
   switch (index) {
-    case 0: // Hero: deep blue luxury atmosphere
-      return 'radial-gradient(circle at 20% 30%, rgba(29, 78, 216, 0.05) 0%, rgba(0,0,0,0) 60%), radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.04) 0%, rgba(0,0,0,0) 60%)';
-    case 1: // About: neutral charcoal cinematic mood
-      return 'radial-gradient(circle at 50% 50%, rgba(63, 63, 70, 0.03) 0%, rgba(0,0,0,0) 70%), radial-gradient(circle at 10% 90%, rgba(39, 39, 42, 0.02) 0%, rgba(0,0,0,0) 50%)';
-    case 2: // Skills: subtle teal technical ambience
-      return 'radial-gradient(circle at 85% 20%, rgba(13, 148, 136, 0.03) 0%, rgba(0,0,0,0) 60%), radial-gradient(circle at 15% 80%, rgba(14, 116, 144, 0.02) 0%, rgba(0,0,0,0) 60%)';
+    case 0: // Hero: deep blue & indigo luxury atmosphere
+      return 'radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.12) 0%, rgba(30, 58, 138, 0.04) 40%, rgba(0,0,0,0) 70%), radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.1) 0%, rgba(0,0,0,0) 60%)';
+    case 1: // About: neutral silver-indigo atmosphere
+      return 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, rgba(203, 213, 225, 0.03) 40%, rgba(0,0,0,0) 75%), radial-gradient(circle at 10% 90%, rgba(79, 70, 229, 0.06) 0%, rgba(0,0,0,0) 60%)';
+    case 2: // Skills: technical cyan ambience
+      return 'radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.1) 0%, rgba(14, 116, 144, 0.03) 50%, rgba(0,0,0,0) 70%), radial-gradient(circle at 15% 80%, rgba(6, 182, 212, 0.08) 0%, rgba(0,0,0,0) 60%)';
     case 3: // Projects: focused high-contrast dark lighting
-      return 'radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.015) 0%, rgba(0,0,0,0) 50%)';
-    case 4: // Contact: soft emotional indigo/purple fade
-      return 'radial-gradient(circle at 75% 30%, rgba(147, 51, 234, 0.04) 0%, rgba(0,0,0,0) 60%), radial-gradient(circle at 20% 70%, rgba(99, 102, 241, 0.03) 0%, rgba(0,0,0,0) 60%)';
+      return 'radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, rgba(30, 58, 138, 0.03) 45%, rgba(0,0,0,0) 70%)';
+    case 4: // Contact: soft emotional violet/indigo fade
+      return 'radial-gradient(circle at 75% 30%, rgba(124, 58, 237, 0.12) 0%, rgba(79, 70, 229, 0.06) 45%, rgba(0,0,0,0) 75%), radial-gradient(circle at 20% 70%, rgba(124, 58, 237, 0.08) 0%, rgba(0,0,0,0) 60%)';
     default:
       return 'none';
   }
@@ -76,6 +92,18 @@ export const ScrollContainer: React.FC<ScrollContainerProps> = ({ children }) =>
       isScrollingRef.current = false;
     }, reduceMotion ? 100 : 800);
   };
+
+  // 2b. Check if there is a target section queued from the Certificates page
+  useEffect(() => {
+    const target = sessionStorage.getItem('scrollTargetSection');
+    if (target !== null) {
+      sessionStorage.removeItem('scrollTargetSection');
+      const index = parseInt(target, 10);
+      setTimeout(() => {
+        scrollToSection(index);
+      }, 400); // Allow browser rendering / page transition to complete
+    }
+  }, []);
 
   // 3. Track scrolling manually for mobile / touch which don't use Lenis
   useEffect(() => {

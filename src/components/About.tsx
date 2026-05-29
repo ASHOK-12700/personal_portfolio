@@ -104,7 +104,7 @@ const certificates = [
   }
 ];
 
-export const About: React.FC = () => {
+export const About: React.FC<{ navigateToCertificates?: () => void }> = ({ navigateToCertificates }) => {
   const { scrollToSection } = useScroll();
   const [activeTab, setActiveTab] = useState<'focus' | 'timeline' | 'certificates'>('focus');
   const [selectedImg, setSelectedImg] = useState<{ img: string; desc: string; title: string } | null>(null);
@@ -143,7 +143,7 @@ export const About: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
           >
             About Me
           </motion.h2>
@@ -153,15 +153,15 @@ export const About: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="space-y-4 text-xs sm:text-sm text-gray-400 font-light leading-relaxed max-w-md mx-auto lg:mx-0"
+            className="space-y-4 text-xs sm:text-sm paragraph-premium max-w-md mx-auto lg:mx-0"
           >
             <p>
               I am currently pursuing my{' '}
-              <span className="text-white font-medium">B.Tech in Computer Science Engineering (3rd Year)</span> at
+              <span className="text-gradient-silver">B.Tech in Computer Science Engineering (3rd Year)</span> at
               Srinivasa Institute of Engineering and Technology. I thrive at the intersection of creation and automation.
             </p>
             <p>
-              My key focus lies in <span className="text-white font-medium">DevOps, cloud architecture (AWS)</span>, 
+              My key focus lies in <span className="text-gradient-indigo">DevOps, cloud architecture (AWS)</span>, 
               and crafting immersive 3D frontend interfaces. I enjoy establishing clean version controls, scaling container architectures, and implementing continuous integration pipelines.
             </p>
             <p>
@@ -174,19 +174,19 @@ export const About: React.FC = () => {
         <div className="lg:col-span-7 w-full flex flex-col items-center">
           
           {/* Glass Tab Headers */}
-          <div className="flex border border-white/5 bg-black/40 backdrop-blur-md rounded-full p-1 mb-6 max-w-md w-full justify-between z-10">
+          <div className="flex border border-white/10 bg-white/[0.03] backdrop-blur-xl rounded-full p-1 mb-6 max-w-md w-full justify-between z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_10px_30px_rgba(0,0,0,0.5)]">
             {(['focus', 'timeline', 'certificates'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-3 text-[10px] sm:text-[11px] uppercase tracking-wider font-bold rounded-full transition-all duration-300 relative ${
-                  activeTab === tab ? 'text-white' : 'text-gray-500 hover:text-gray-300'
+                  activeTab === tab ? 'text-white' : 'text-gray-400 hover:text-gray-200'
                 }`}
               >
                 {activeTab === tab && (
                   <motion.div
                     layoutId="activeTabBg"
-                    className="absolute inset-0 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full z-0"
+                    className="absolute inset-0 bg-white/[0.08] backdrop-blur-lg border border-white/15 rounded-full z-0 shadow-[0_0_12px_rgba(255,255,255,0.15)]"
                     transition={reduceMotion ? { duration: 0.1 } : { type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -244,11 +244,11 @@ export const About: React.FC = () => {
                       <GraduationCap size={16} />
                       <h4 className="text-xs uppercase tracking-widest font-bold font-sans">Academic Path</h4>
                     </div>
-                    <div className="space-y-4 pl-4 border-l border-white/10 relative">
+                    <div className="space-y-4 pl-4 border-l border-white/15 relative">
                       {educationList.map((edu, idx) => (
                         <div key={idx} className="relative group">
                           {/* Silver-White indicator */}
-                          <div className="absolute -left-[20px] top-1.5 w-2 h-2 rounded-full bg-white group-hover:scale-125 transition-transform duration-200" />
+                          <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-white to-gray-300 shadow-[0_0_8px_rgba(255,255,255,0.7)] group-hover:scale-125 transition-transform duration-200" />
                           <h5 className="text-[11px] sm:text-xs font-semibold text-white leading-tight">{edu.degree}</h5>
                           <p className="text-[10px] text-gray-400 font-light">{edu.school}</p>
                           <span className="text-[9px] text-gray-500 font-mono">{edu.year}</span>
@@ -263,11 +263,11 @@ export const About: React.FC = () => {
                       <Briefcase size={16} />
                       <h4 className="text-xs uppercase tracking-widest font-bold font-sans">Internships</h4>
                     </div>
-                    <div className="space-y-4 pl-4 border-l border-white/10 relative">
+                    <div className="space-y-4 pl-4 border-l border-indigo-500/20 relative">
                       {internshipList.map((intern, idx) => (
                         <div key={idx} className="relative group">
                           {/* Silver-Gray indicator */}
-                          <div className="absolute -left-[20px] top-1.5 w-2 h-2 rounded-full bg-gray-400 group-hover:scale-125 transition-transform duration-200" />
+                          <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 shadow-[0_0_8px_rgba(99,102,241,0.6)] group-hover:scale-125 transition-transform duration-200" />
                           <h5 className="text-[11px] sm:text-xs font-semibold text-white leading-tight">{intern.role}</h5>
                           <p className="text-[10px] text-gray-300 font-light">{intern.company}</p>
                           <p className="text-[9px] sm:text-[10px] text-gray-400 font-light mt-1 leading-snug">{intern.desc}</p>
@@ -285,36 +285,46 @@ export const About: React.FC = () => {
                   initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full"
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full flex flex-col items-center gap-6"
                 >
-                  <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-mono flex items-center gap-2 justify-center">
+                  <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 font-mono flex items-center gap-2 justify-center">
                     <Award size={12} className="text-white/60" />
-                    <span>Scroll horizontally to view certificates (click to inspect)</span>
+                    <span>Featured Credentials (click to inspect)</span>
                   </div>
                   
-                  {/* Horizontal Scroll Drawer */}
-                  <div className="w-full flex gap-4 overflow-x-auto pb-4 pt-1 px-1 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/10">
-                    {certificates.map((cert, idx) => (
+                  {/* Featured Grid (4-5 items) */}
+                  <div className="grid grid-cols-2 gap-4 w-full">
+                    {certificates.slice(0, 4).map((cert, idx) => (
                       <div
                         key={idx}
                         onClick={() => setSelectedImg({ img: cert.img, desc: cert.desc, title: cert.title })}
-                        className="interactive-card flex-shrink-0 w-44 bg-black/40 border border-white/5 rounded-xl overflow-hidden hover:border-white/20 hover:bg-black/60 transition-all duration-200 cursor-pointer text-left p-3 shadow-lg"
+                        className="interactive-card cinematic-card group relative bg-[#08080a] border border-white/5 rounded-2xl overflow-hidden cursor-pointer text-left p-3.5 shadow-lg flex flex-col justify-between"
                         data-cursor-label="View"
                       >
-                        <div className="w-full h-24 overflow-hidden rounded-lg mb-2 relative group bg-gray-900">
-                          <div className="absolute inset-0 bg-black/30 group-hover:opacity-0 transition-opacity duration-300 z-10" />
-                          <img
-                            src={cert.img}
-                            alt={cert.title}
-                            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
-                          />
+                        <div>
+                          <div className="w-full h-24 overflow-hidden rounded-xl mb-3 relative bg-gray-950">
+                            <div className="absolute inset-0 bg-black/45 group-hover:opacity-0 transition-opacity duration-300 z-10" />
+                            <img
+                              src={cert.img}
+                              alt={cert.title}
+                              className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500"
+                            />
+                          </div>
+                          <h5 className="text-[11px] sm:text-xs font-bold text-white tracking-tight line-clamp-1">{cert.title}</h5>
+                          <p className="text-[9px] sm:text-[10px] text-gray-400 font-sans truncate mt-0.5">{cert.issuer}</p>
                         </div>
-                        <h5 className="text-[11px] font-bold text-white truncate">{cert.title}</h5>
-                        <p className="text-[9px] text-gray-400 font-sans truncate">{cert.issuer}</p>
                       </div>
                     ))}
                   </div>
+
+                  {/* View All Button */}
+                  <button
+                    onClick={() => navigateToCertificates?.()}
+                    className="magnetic px-8 py-3.5 luxury-btn rounded-full text-[10px] uppercase tracking-wider font-bold text-gray-200 transition-all duration-200 mt-2 z-20 cursor-pointer active:scale-95 shadow-lg shadow-black/40"
+                  >
+                    View All Certificates
+                  </button>
                 </motion.div>
               )}
 

@@ -178,6 +178,9 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       {/* Cinematic Jittering Noise Film Texture Overlay */}
       <div className="cinematic-noise" />
 
+      {/* Cinematic Vignette Overlay */}
+      <div className="cinematic-vignette" />
+
       {/* Ambient static lighting fallback or slow floating orbs (disabled in reduced motion) */}
       {!reduceMotion && (
         <>

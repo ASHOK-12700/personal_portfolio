@@ -74,7 +74,7 @@ export const Portfolio: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
           >
             Featured Work
           </motion.h2>
@@ -89,18 +89,23 @@ export const Portfolio: React.FC = () => {
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.8, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => setSelectedProject(project)}
-              className="group interactive-card glass-panel border border-white/5 bg-[#08080a]/60 p-6 rounded-3xl flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-white/10 hover:shadow-[0_0_30px_rgba(255,255,255,0.02)]"
+              className="group interactive-card cinematic-card p-8 rounded-3xl flex flex-col justify-between cursor-pointer overflow-hidden transition-all duration-500 hover:border-white/15"
               data-cursor-label="Explore"
             >
+              {/* Soft Spotlight background glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              {/* Subtle ambient light indicator inside the card */}
+              <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-indigo-500/5 blur-2xl pointer-events-none group-hover:bg-indigo-500/12 transition-all duration-700" />
+
               {/* Card Header */}
-              <div>
-                <div className="flex justify-between items-start mb-5">
-                  <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-white/70 transition-all duration-300 group-hover:scale-110 group-hover:text-white group-hover:border-white/15">
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white/70 transition-all duration-300 group-hover:scale-105 group-hover:text-indigo-400 group-hover:border-indigo-500/30 group-hover:shadow-[0_0_15px_rgba(99,102,241,0.15)]">
                     <project.icon size={22} />
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest font-bold px-3 py-1 bg-white/5 border border-white/5 text-gray-400 rounded-full flex items-center gap-1.5">
+                  <span className="text-[10px] uppercase tracking-widest font-bold px-3 py-1 bg-white/[0.04] border border-white/10 text-gray-300 rounded-full flex items-center gap-1.5 font-mono shadow-[inset_0_1px_0px_rgba(255,255,255,0.05)]">
                     <span className="relative flex h-1.5 w-1.5">
                       {project.statusType === 'active' ? (
                         <>
@@ -119,10 +124,10 @@ export const Portfolio: React.FC = () => {
                 </div>
 
                 {/* Typography info */}
-                <span className="text-[10px] uppercase tracking-widest text-white/50 font-semibold mb-1 block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40 font-semibold mb-1.5 block font-sans">
                   {project.subtitle}
                 </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 transition-colors duration-300 group-hover:text-white">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 tracking-tight transition-colors duration-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300">
                   {project.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-400 font-light leading-relaxed mb-6">
@@ -131,13 +136,13 @@ export const Portfolio: React.FC = () => {
               </div>
 
               {/* Tags and CTA Links */}
-              <div>
+              <div className="relative z-10">
                 {/* Outlined tags */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.tags.map((tag, tagIdx) => (
                     <span 
                       key={tagIdx}
-                      className="text-[9px] sm:text-[10px] text-gray-300 font-light border border-white/5 bg-white/2 px-2.5 py-1 rounded-md"
+                      className="text-[9px] sm:text-[10px] text-gray-300 font-light border border-white/10 bg-white/[0.03] px-2.5 py-1 rounded-md font-mono shadow-[inset_0_1.5px_0px_rgba(255,255,255,0.03)] group-hover:border-white/15 transition-colors"
                     >
                       {tag}
                     </span>
@@ -151,7 +156,7 @@ export const Portfolio: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="magnetic flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors py-1 cursor-pointer"
+                    className="magnetic flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors py-1 cursor-pointer font-sans"
                   >
                     <Github size={14} />
                     <span>Source Code</span>
@@ -161,7 +166,7 @@ export const Portfolio: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="magnetic flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors py-1 cursor-pointer"
+                    className="magnetic flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors py-1 cursor-pointer font-sans"
                   >
                     <ExternalLink size={14} />
                     <span>Live Showcase</span>
@@ -186,20 +191,20 @@ export const Portfolio: React.FC = () => {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-black/85 backdrop-blur-xl"
             onClick={() => setSelectedProject(null)}
           >
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 15 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-[#08080a] border border-white/5 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] relative select-text"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close button */}
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all duration-300 z-10 cursor-pointer"
-              >
+             {/* Modal Box */}
+             <motion.div
+               initial={{ opacity: 0, scale: 0.96, y: 15 }}
+               animate={{ opacity: 1, scale: 1, y: 0 }}
+               exit={{ opacity: 0, scale: 0.96, y: 15 }}
+               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+               className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-black/60 border border-white/10 backdrop-blur-2xl rounded-3xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_30px_60px_rgba(0,0,0,0.9)] relative select-text"
+               onClick={(e) => e.stopPropagation()}
+             >
+               {/* Close button */}
+               <button
+                 onClick={() => setSelectedProject(null)}
+                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 z-10 cursor-pointer shadow-lg"
+               >
                 <X size={16} />
               </button>
 
