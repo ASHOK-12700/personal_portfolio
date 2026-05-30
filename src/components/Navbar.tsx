@@ -93,7 +93,7 @@ export const Navbar: React.FC = () => {
               key={link.index}
               onClick={() => handleNavClick(link.index)}
               className={`text-[10px] uppercase tracking-widest font-bold font-sans transition-all duration-500 relative py-1 cursor-pointer hover:-translate-y-[1px] hover:scale-[1.03] ${
-                isLinkActive(link.index) ? 'text-white' : 'text-gray-400 hover:text-white'
+                isLinkActive(link.index) ? 'text-white' : 'text-gray-300 hover:text-white'
               }`}
             >
               {link.name}
@@ -127,7 +127,7 @@ export const Navbar: React.FC = () => {
                   setTimeout(() => handleNavClick(link.index), 200);
                 }}
                 className={`text-lg uppercase tracking-widest font-bold font-sans transition-all duration-300 ${
-                  isLinkActive(link.index) ? 'text-white border-b border-white pb-1' : 'text-gray-500 hover:text-gray-300'
+                  isLinkActive(link.index) ? 'text-white border-b border-white pb-1' : 'text-gray-300 hover:text-white'
                 }`}
               >
                 {link.name}

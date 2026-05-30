@@ -41,15 +41,15 @@ interface ScrollContainerProps {
 const getLightingBackground = (index: number) => {
   switch (index) {
     case 0: // Hero: deep blue & indigo luxury atmosphere
-      return 'radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.12) 0%, rgba(30, 58, 138, 0.04) 40%, rgba(0,0,0,0) 70%), radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.1) 0%, rgba(0,0,0,0) 60%)';
-    case 1: // About: neutral silver-indigo atmosphere
-      return 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, rgba(203, 213, 225, 0.03) 40%, rgba(0,0,0,0) 75%), radial-gradient(circle at 10% 90%, rgba(79, 70, 229, 0.06) 0%, rgba(0,0,0,0) 60%)';
-    case 2: // Skills: technical cyan ambience
-      return 'radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.1) 0%, rgba(14, 116, 144, 0.03) 50%, rgba(0,0,0,0) 70%), radial-gradient(circle at 15% 80%, rgba(6, 182, 212, 0.08) 0%, rgba(0,0,0,0) 60%)';
-    case 3: // Projects: focused high-contrast dark lighting
-      return 'radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, rgba(30, 58, 138, 0.03) 45%, rgba(0,0,0,0) 70%)';
+      return 'radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, rgba(30, 58, 138, 0.05) 50%, rgba(0,0,0,0) 80%), radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%)';
+    case 1: // About: neutral silver-indigo atmosphere (brighter)
+      return 'radial-gradient(circle at 50% 40%, rgba(124, 58, 237, 0.12) 0%, rgba(255, 255, 255, 0.04) 50%, rgba(0,0,0,0) 80%), radial-gradient(circle at 10% 90%, rgba(99, 102, 241, 0.08) 0%, rgba(0,0,0,0) 70%)';
+    case 2: // Skills: technical cyan ambience (highly readable)
+      return 'radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.12) 0%, rgba(14, 116, 144, 0.04) 50%, rgba(0,0,0,0) 80%), radial-gradient(circle at 15% 80%, rgba(99, 102, 241, 0.08) 0%, rgba(0,0,0,0) 70%)';
+    case 3: // Projects: focused high-contrast dark lighting but readable
+      return 'radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(30, 58, 138, 0.05) 50%, rgba(0,0,0,0) 80%)';
     case 4: // Contact: soft emotional violet/indigo fade
-      return 'radial-gradient(circle at 75% 30%, rgba(124, 58, 237, 0.12) 0%, rgba(79, 70, 229, 0.06) 45%, rgba(0,0,0,0) 75%), radial-gradient(circle at 20% 70%, rgba(124, 58, 237, 0.08) 0%, rgba(0,0,0,0) 60%)';
+      return 'radial-gradient(circle at 75% 30%, rgba(124, 58, 237, 0.14) 0%, rgba(79, 70, 229, 0.08) 50%, rgba(0,0,0,0) 80%), radial-gradient(circle at 20% 70%, rgba(124, 58, 237, 0.1) 0%, rgba(0,0,0,0) 75%)';
     default:
       return 'none';
   }
@@ -103,7 +103,29 @@ export const ScrollContainer: React.FC<ScrollContainerProps> = ({ children }) =>
         scrollToSection(index);
       }, 400); // Allow browser rendering / page transition to complete
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 2c. Update adaptive overlay CSS properties on section change
+  useEffect(() => {
+    const root = document.documentElement;
+    if (activeSection === 0) { // Hero
+      root.style.setProperty('--vignette-opacity', '0.35');
+      root.style.setProperty('--mesh-orb-opacity', '0.18');
+    } else if (activeSection === 1) { // About
+      root.style.setProperty('--vignette-opacity', '0.15');
+      root.style.setProperty('--mesh-orb-opacity', '0.10');
+    } else if (activeSection === 2) { // Skills
+      root.style.setProperty('--vignette-opacity', '0.20');
+      root.style.setProperty('--mesh-orb-opacity', '0.12');
+    } else if (activeSection === 3) { // Projects
+      root.style.setProperty('--vignette-opacity', '0.25');
+      root.style.setProperty('--mesh-orb-opacity', '0.14');
+    } else if (activeSection === 4) { // Contact
+      root.style.setProperty('--vignette-opacity', '0.18');
+      root.style.setProperty('--mesh-orb-opacity', '0.12');
+    }
+  }, [activeSection]);
 
   // 3. Track scrolling manually for mobile / touch which don't use Lenis
   useEffect(() => {

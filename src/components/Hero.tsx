@@ -100,7 +100,7 @@ export const Hero: React.FC = () => {
       )}
 
       {/* Top spacing helper */}
-      <div className="h-16" />
+      <div className="h-12" />
 
       {/* Hero content grid */}
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-6 items-center my-auto z-10">
@@ -259,7 +259,7 @@ export const Hero: React.FC = () => {
         >
           {/* Subtle Ambient Backlight Glow behind the card */}
           {!reduceMotion && (
-            <div className="absolute w-80 h-[460px] rounded-full bg-gradient-to-tr from-indigo-500/15 to-cyan-500/10 blur-[100px] pointer-events-none z-0 translate-y-[-20px]" />
+            <div className="absolute w-80 h-[460px] rounded-full bg-gradient-to-tr from-indigo-600/12 via-violet-600/8 to-cyan-500/6 blur-[120px] pointer-events-none z-0 translate-y-[-20px]" />
           )}
 
           <motion.div
@@ -292,7 +292,7 @@ export const Hero: React.FC = () => {
               className="absolute inset-0 w-full h-full pointer-events-none group-hover:scale-[1.03] transition-transform duration-700 ease-out select-none"
               style={{ transform: reduceMotion ? 'none' : 'translateZ(-15px)' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-90 z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-75 z-10" />
               {/* Premium cinematic reflection highlight */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-15" />
               {/* Realistic Glass Shine Spotlight Overlay */}
@@ -300,7 +300,7 @@ export const Hero: React.FC = () => {
                 <div 
                   className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   style={{
-                    background: `radial-gradient(circle 200px at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255, 255, 255, 0.08), transparent 80%)`,
+                    background: `radial-gradient(circle 180px at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 50%, transparent 80%)`,
                     mixBlendMode: 'overlay',
                   }}
                 />
@@ -308,7 +308,7 @@ export const Hero: React.FC = () => {
               <img
                 src="https://i.postimg.cc/SND65KHx/my-photo.jpg"
                 alt="Ashok Srinivas Siva Kiran"
-                className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                className="w-full h-full object-cover grayscale-[20%] opacity-95 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
               />
             </div>
 

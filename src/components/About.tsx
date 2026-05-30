@@ -305,11 +305,11 @@ export const About: React.FC<{ navigateToCertificates?: () => void }> = ({ navig
                       >
                         <div>
                           <div className="w-full h-24 overflow-hidden rounded-xl mb-3 relative bg-gray-950">
-                            <div className="absolute inset-0 bg-black/45 group-hover:opacity-0 transition-opacity duration-300 z-10" />
+                            <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity duration-300 z-10" />
                             <img
                               src={cert.img}
                               alt={cert.title}
-                              className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500"
+                              className="w-full h-full object-cover grayscale-[20%] opacity-95 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-500"
                             />
                           </div>
                           <h5 className="text-[11px] sm:text-xs font-bold text-white tracking-tight line-clamp-1">{cert.title}</h5>

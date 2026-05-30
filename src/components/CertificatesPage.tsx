@@ -157,20 +157,32 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedImg, setSelectedImg] = useState<{ img: string; desc: string; title: string; issuer: string; date: string } | null>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const particlesRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
-  // Set page title & smooth scroll to top
+  // Set page title & smooth scroll to top & adaptive overlays
   useEffect(() => {
     document.title = "Certifications & Achievements | Ashok Srinivas";
     window.scrollTo(0, 0);
+
+    const root = document.documentElement;
+    root.style.setProperty('--vignette-opacity', '0.15');
+    root.style.setProperty('--mesh-orb-opacity', '0.08');
+
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReduceMotion(mediaQuery.matches);
 
     return () => {
       document.title = "Ashok Srinivas | Creative Portfolio";
+      window.removeEventListener('resize', checkDevice);
     };
   }, []);
 
@@ -260,7 +272,7 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
       {/* Floating particles - restrained */}
       {!reduceMotion && (
         <div ref={particlesRef} className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          {Array.from({ length: 15 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 6 : 15 }).map((_, i) => (
             <div
               key={i}
               className="particle absolute w-1 h-1 bg-white/20 rounded-full"
@@ -275,7 +287,7 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
       )}
 
       {/* Header Container */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12 pt-28 sm:pt-32 relative z-10">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 pt-16 sm:pt-20 relative z-10">
         
         {/* Back Link */}
         <button 
@@ -318,29 +330,8 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
           </motion.p>
         </div>
 
-        {/* Search & Categories bar */}
-        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-12 border-b border-white/5 pb-8 relative z-20">
-          {/* Categories Tab list */}
-          <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none items-center max-w-full">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-2 px-4 py-2 text-[10px] uppercase tracking-wider font-bold rounded-full transition-all duration-300 border cursor-pointer whitespace-nowrap ${
-                    selectedCategory === cat.id
-                      ? 'bg-white text-black border-white shadow-[0_0_12px_rgba(255,255,255,0.25)]'
-                      : 'bg-white/[0.02] border-white/10 text-gray-400 hover:text-white hover:border-white/20'
-                  }`}
-                >
-                  <Icon size={12} />
-                  <span>{cat.name}</span>
-                </button>
-              );
-            })}
-          </div>
-
+        {/* Search bar */}
+        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-end mb-12 border-b border-white/5 pb-8 relative z-20">
           {/* Search Box */}
           <div className="relative w-full md:w-72 flex-shrink-0">
             <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -394,11 +385,11 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
                       className="w-full h-44 overflow-hidden rounded-2xl mb-4 relative bg-gray-950 border border-white/10"
                       style={{ transform: reduceMotion ? 'none' : 'translateZ(-10px)' }}
                     >
-                      <div className="absolute inset-0 bg-black/45 group-hover:opacity-0 transition-opacity duration-300 z-10" />
+                      <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity duration-300 z-10" />
                       <img
                         src={cert.img}
                         alt={cert.title}
-                        className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-700"
+                        className="w-full h-full object-cover grayscale-[25%] opacity-95 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-700"
                       />
                     </div>
 
@@ -532,15 +523,6 @@ export const CertificatesPage: React.FC<CertificatesPageProps> = ({ navigateHome
                   >
                     Close Inspection
                   </button>
-                  <a
-                    href="https://github.com/ASHOK-12700/my-vault.git"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-2.5 bg-white text-black rounded-full text-[10px] uppercase tracking-wider font-bold hover:bg-gray-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-lg hover:shadow-white/5"
-                  >
-                    <ExternalLink size={10} />
-                    <span>Verify Credential</span>
-                  </a>
                 </div>
               </div>
             </motion.div>

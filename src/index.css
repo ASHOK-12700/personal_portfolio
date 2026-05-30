@@ -6,7 +6,10 @@
   :root {
     --color-bg: #030303;
     --color-text-primary: #ffffff;
-    --color-text-secondary: #a1a1aa; /* softer gray-white */
+    --color-text-secondary: #d1d5db; /* softer gray-white */
+    
+    --vignette-opacity: 0.35;
+    --mesh-orb-opacity: 0.16;
     
     /* Ambient color tokens */
     --color-indigo: #4f46e5;
@@ -55,7 +58,7 @@
     border-radius: 50%;
     filter: blur(160px);
     mix-blend-mode: screen;
-    opacity: 0.16;
+    opacity: var(--mesh-orb-opacity, 0.16);
     will-change: transform, opacity;
   }
 
@@ -165,7 +168,7 @@
     height: 200%;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     animation: noise-jitter 0.3s steps(10) infinite;
-    opacity: 0.015; /* Elegant cinematic noise grain */
+    opacity: 0.007; /* Elegant cinematic noise grain - lowered to keep text razor sharp */
     pointer-events: none;
     z-index: 9999;
   }
@@ -174,9 +177,10 @@
   .cinematic-vignette {
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 35%, rgba(3, 3, 3, 0.8) 100%);
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(3, 3, 3, var(--vignette-opacity, 0.35)) 100%);
     pointer-events: none;
     z-index: 2;
+    transition: background 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* Ambient light float movements - slowed down for elegance */
@@ -217,17 +221,20 @@
 
   /* Luxury Glassmorphism panel - responsive blur settings */
   .glass-panel {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(16px); /* Optimized for mobile */
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 10px 40px -10px rgba(0, 0, 0, 0.85);
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(8px); /* Lowered for mobile performance */
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 30px -10px rgba(0, 0, 0, 0.8);
   }
 
   @media (min-width: 768px) {
     .glass-panel {
-      backdrop-filter: blur(26px); /* Deeper luxury blur for desktop */
-      -webkit-backdrop-filter: blur(26px);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px); /* Deep luxury blur for desktop */
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 10px 40px -10px rgba(0, 0, 0, 0.85);
     }
   }
 
@@ -243,16 +250,16 @@
 
   /* Premium Typography Classes */
   .heading-premium {
-    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #cbd5e1 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.06);
+    text-shadow: 0 0 45px rgba(255, 255, 255, 0.08), 0 0 80px rgba(99, 102, 241, 0.03); /* Soft shadow bloom behind typography */
     letter-spacing: -0.02em;
   }
 
   .paragraph-premium {
-    color: #a1a1aa; /* softer gray-white tone */
-    line-height: 1.75;
+    color: var(--color-text-secondary, #d1d5db); /* softer gray-white tone */
+    line-height: 1.85; /* Increased for better readability */
     letter-spacing: 0.015em;
     font-weight: 300;
   }
@@ -426,10 +433,24 @@
 }
 
 .cinematic-card:hover {
-  transform: translateY(-6px) scale(1.015);
+  transform: translateY(-6px) scale(1.01);
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), 0 30px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.08); /* soft luxury white shadow */
+}
+
+/* Mobile-first Performance Enhancements */
+@media (max-width: 767px) {
+  .gradient-mesh-orb {
+    animation: none !important;
+    filter: blur(100px) !important;
+    opacity: 0.06 !important;
+  }
+  .ambient-glow-blue, 
+  .ambient-glow-purple {
+    animation: none !important;
+    filter: blur(60px) !important;
+  }
 }
 
 /* Elegant custom scrollbar for detailed certificates page */

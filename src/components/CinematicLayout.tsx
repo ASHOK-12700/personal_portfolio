@@ -51,18 +51,18 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
     // Apply cursor-active class to body to hide standard cursor on desktop
     document.body.classList.add('custom-cursor-active');
 
-    // Create GSAP quickTo tweens with smooth deceleration easing
-    const ringX = gsap.quickTo(cursorRingRef.current, 'x', { duration: 0.25, ease: 'power3.out' });
-    const ringY = gsap.quickTo(cursorRingRef.current, 'y', { duration: 0.25, ease: 'power3.out' });
+    // Create GSAP quickTo tweens with minimal smoothing for instant tracking
+    const ringX = gsap.quickTo(cursorRingRef.current, 'x', { duration: 0.08, ease: 'linear', force3D: true });
+    const ringY = gsap.quickTo(cursorRingRef.current, 'y', { duration: 0.08, ease: 'linear', force3D: true });
     
-    const dotX = gsap.quickTo(cursorDotRef.current, 'x', { duration: 0.06, ease: 'power2.out' });
-    const dotY = gsap.quickTo(cursorDotRef.current, 'y', { duration: 0.06, ease: 'power2.out' });
+    const dotX = gsap.quickTo(cursorDotRef.current, 'x', { duration: 0.02, ease: 'linear', force3D: true });
+    const dotY = gsap.quickTo(cursorDotRef.current, 'y', { duration: 0.02, ease: 'linear', force3D: true });
 
-    const spotlightX = gsap.quickTo(spotlightRef.current, 'x', { duration: 0.6, ease: 'power2.out' });
-    const spotlightY = gsap.quickTo(spotlightRef.current, 'y', { duration: 0.6, ease: 'power2.out' });
+    const spotlightX = gsap.quickTo(spotlightRef.current, 'x', { duration: 0.15, ease: 'linear', force3D: true });
+    const spotlightY = gsap.quickTo(spotlightRef.current, 'y', { duration: 0.15, ease: 'linear', force3D: true });
 
-    const parallaxX = gsap.quickTo(parallaxLayerRef.current, 'x', { duration: 1.5, ease: 'power2.out' });
-    const parallaxY = gsap.quickTo(parallaxLayerRef.current, 'y', { duration: 1.5, ease: 'power2.out' });
+    const parallaxX = gsap.quickTo(parallaxLayerRef.current, 'x', { duration: 0.4, ease: 'linear', force3D: true });
+    const parallaxY = gsap.quickTo(parallaxLayerRef.current, 'y', { duration: 0.4, ease: 'linear', force3D: true });
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
@@ -97,7 +97,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       if (interactiveEl) {
         const label = interactiveEl.getAttribute('data-cursor-label');
         if (label) {
-          setCursorLabel(label);
+          setCursorLabel(prev => prev !== label ? label : prev);
         }
 
         // Apply luxury monochrome feedback to cursor (scale to 2.0 for spotlight expansion)
@@ -140,7 +140,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       const interactiveEl = target.closest('a, button, input, textarea, [role="button"], .interactive-card');
       
       if (interactiveEl) {
-        setCursorLabel('');
+        setCursorLabel(prev => prev !== '' ? '' : prev);
 
         // Reset cursor to original style
         gsap.to(cursorRingRef.current, {
@@ -206,7 +206,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       {/* 3D Parallax Ambient Depth Layer (12-18 particles max global backdrop particles) */}
       {!reduceMotion && (
         <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
-          {Array.from({ length: 15 }).map((_, i) => {
+          {Array.from({ length: isMobile ? 6 : 15 }).map((_, i) => {
             const size = i % 3 === 0 ? 'w-1 h-1' : i % 3 === 1 ? 'w-1.5 h-1.5' : 'w-2 h-2';
             const blur = i % 2 === 0 ? 'blur-[0.5px]' : 'blur-[1px]';
             const anim = i % 3 === 0 ? 'animate-particle-1' : i % 3 === 1 ? 'animate-particle-2' : 'animate-particle-3';
@@ -245,6 +245,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
           style={{
             background: 'radial-gradient(circle, rgba(255, 255, 255, 0.015) 0%, rgba(255, 255, 255, 0.003) 40%, rgba(0,0,0,0) 70%)',
             mixBlendMode: 'screen',
+            willChange: 'transform',
           }}
         />
       )}
