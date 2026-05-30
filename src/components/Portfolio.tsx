@@ -44,6 +44,47 @@ const projects = [
       'Geo-located smart bin status indicators mapping fill-levels'
     ]
   }
+  ,
+  {
+    title: 'AI Mock Interview',
+    subtitle: 'AI Interview Simulator',
+    description: 'An AI-powered interview preparation platform that simulates real-world technical and HR interviews. Users can practice interview questions, receive instant feedback, improve communication skills, and build confidence through realistic interview experiences.',
+    tags: ['AI', 'React', 'TypeScript', 'Speech Analysis', 'Interview Automation'],
+    icon: Layers,
+    status: 'Ongoing',
+    statusType: 'active',
+    codeLink: '#',
+    detailsLink: '#',
+    architecture: 'Cloud-hosted service using React frontend and AI inference services for question generation, scoring, and speech analysis.',
+    challenge: 'Creating realistic, adaptive interview flows that respond to both content and delivery.',
+    solution: 'Built modular LLM prompts, integrated real-time speech analysis, and designed feedback loops for iterative improvement.',
+    features: [
+      'Adaptive question sequencing',
+      'Speech clarity and sentiment feedback',
+      'Technical question grading and hints',
+      'Session history and progress tracking'
+    ]
+  },
+  {
+    title: 'Max Assistant for Android',
+    subtitle: 'Personal Android Voice Assistant',
+    description: 'A personal Android voice assistant designed to perform smart daily tasks through voice commands. Features include app control, calling, messaging, system automation, reminders, and intelligent assistant capabilities inspired by modern AI assistants.',
+    tags: ['Android', 'Kotlin', 'Voice Recognition', 'Automation', 'AI Assistant'],
+    icon: Compass,
+    status: 'Ongoing',
+    statusType: 'active',
+    codeLink: '#',
+    detailsLink: '#',
+    architecture: 'Native Android app built in Kotlin with on-device voice pipelines and cloud-based intent resolution.',
+    challenge: 'Accurate intent detection across noisy environments with low latency.',
+    solution: 'Hybrid on-device wakeword and cloud-based NLU with local caching and fallback strategies.',
+    features: [
+      'App control and shortcuts',
+      'Call and message automation',
+      'Reminders and routines',
+      'Natural language intent parsing'
+    ]
+  }
 ];
 
 const WiFiShieldSimulator: React.FC = () => {
@@ -315,7 +356,7 @@ export const Portfolio: React.FC = () => {
         </div>
 
         {/* Dynamic Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
           {projects.map((project, idx) => (
             <motion.div
               key={idx}
@@ -324,7 +365,7 @@ export const Portfolio: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => setSelectedProject(project)}
-              className="group interactive-card cinematic-card p-8 rounded-3xl flex flex-col justify-between cursor-pointer overflow-hidden transition-all duration-500 hover:border-white/15"
+              className="group interactive-card cinematic-card p-8 rounded-3xl flex flex-col justify-between cursor-pointer overflow-hidden transition-all duration-500 hover:border-white/15 h-full"
               data-cursor-label="Explore"
             >
               {/* Soft Spotlight background glow */}

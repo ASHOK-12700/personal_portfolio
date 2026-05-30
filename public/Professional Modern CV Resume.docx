@@ -1,0 +1,7 @@
+This is a placeholder text file named Professional Modern CV Resume.docx.
+
+You uploaded the Word file during the session. If you want the exact binary Word document placed here, please run the PowerShell copy command from your machine (see public/README.md) to copy the original file from your Downloads folder into this location.
+
+Copy command example:
+
+Copy-Item "C:\Users\ASHOK\Downloads\Professional Modern CV Resume.docx" -Destination ".\public\Professional Modern CV Resume.docx"

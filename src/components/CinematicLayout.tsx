@@ -52,27 +52,28 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
     document.body.classList.add('custom-cursor-active');
 
     // Create GSAP quickTo tweens with minimal smoothing for instant tracking
-    const ringX = gsap.quickTo(cursorRingRef.current, 'x', { duration: 0.08, ease: 'linear', force3D: true });
-    const ringY = gsap.quickTo(cursorRingRef.current, 'y', { duration: 0.08, ease: 'linear', force3D: true });
+    // Tighter durations for near-instant tracking while keeping smoothness
+    const ringX = gsap.quickTo(cursorRingRef.current, 'x', { duration: 0.03, ease: 'linear', force3D: true });
+    const ringY = gsap.quickTo(cursorRingRef.current, 'y', { duration: 0.03, ease: 'linear', force3D: true });
     
-    const dotX = gsap.quickTo(cursorDotRef.current, 'x', { duration: 0.02, ease: 'linear', force3D: true });
-    const dotY = gsap.quickTo(cursorDotRef.current, 'y', { duration: 0.02, ease: 'linear', force3D: true });
+    const dotX = gsap.quickTo(cursorDotRef.current, 'x', { duration: 0.006, ease: 'linear', force3D: true });
+    const dotY = gsap.quickTo(cursorDotRef.current, 'y', { duration: 0.006, ease: 'linear', force3D: true });
 
-    const spotlightX = gsap.quickTo(spotlightRef.current, 'x', { duration: 0.15, ease: 'linear', force3D: true });
-    const spotlightY = gsap.quickTo(spotlightRef.current, 'y', { duration: 0.15, ease: 'linear', force3D: true });
+    const spotlightX = gsap.quickTo(spotlightRef.current, 'x', { duration: 0.04, ease: 'linear', force3D: true });
+    const spotlightY = gsap.quickTo(spotlightRef.current, 'y', { duration: 0.04, ease: 'linear', force3D: true });
 
-    const parallaxX = gsap.quickTo(parallaxLayerRef.current, 'x', { duration: 0.4, ease: 'linear', force3D: true });
-    const parallaxY = gsap.quickTo(parallaxLayerRef.current, 'y', { duration: 0.4, ease: 'linear', force3D: true });
+    const parallaxX = gsap.quickTo(parallaxLayerRef.current, 'x', { duration: 0.12, ease: 'linear', force3D: true });
+    const parallaxY = gsap.quickTo(parallaxLayerRef.current, 'y', { duration: 0.12, ease: 'linear', force3D: true });
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       
-      // Update custom cursor positions (ring has small offset to center it)
-      ringX(clientX - 16);
-      ringY(clientY - 16);
+      // Update custom cursor positions (center offsets tuned for instant feel)
+      ringX(clientX - 4);
+      ringY(clientY - 4);
       
-      dotX(clientX - 3);
-      dotY(clientY - 3);
+      dotX(clientX - 1);
+      dotY(clientY - 1);
 
       // Update spotlight position
       spotlightX(clientX);
@@ -106,14 +107,14 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           borderColor: 'rgba(255, 255, 255, 0.5)',
           borderWidth: '1px',
-          duration: 0.2,
+          duration: 0.12,
           overwrite: 'auto'
         });
         gsap.to(cursorDotRef.current, {
           scale: 0,
           opacity: 0,
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          duration: 0.2,
+          duration: 0.12,
           overwrite: 'auto'
         });
 
@@ -124,9 +125,9 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
           const relY = e.clientY - rect.top - rect.height / 2;
           
           gsap.to(interactiveEl, {
-            x: relX * 0.2,
-            y: relY * 0.2,
-            duration: 0.25,
+            x: relX * 0.18,
+            y: relY * 0.18,
+            duration: 0.18,
             ease: 'power2.out'
           });
         }
@@ -142,20 +143,20 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
       if (interactiveEl) {
         setCursorLabel(prev => prev !== '' ? '' : prev);
 
-        // Reset cursor to original style
+        // Reset cursor to original style quickly
         gsap.to(cursorRingRef.current, {
           scale: 1,
           backgroundColor: 'transparent',
           borderColor: 'rgba(255, 255, 255, 0.3)',
           borderWidth: '1px',
-          duration: 0.25,
+          duration: 0.14,
           overwrite: 'auto'
         });
         gsap.to(cursorDotRef.current, {
           scale: 1,
           opacity: 1,
           backgroundColor: 'rgb(243, 244, 246)',
-          duration: 0.25,
+          duration: 0.12,
           overwrite: 'auto'
         });
 
@@ -164,7 +165,7 @@ export const CinematicLayout: React.FC<CinematicLayoutProps> = ({ children }) =>
           gsap.to(interactiveEl, {
             x: 0,
             y: 0,
-            duration: 0.4,
+            duration: 0.22,
             ease: 'power3.out'
           });
         }

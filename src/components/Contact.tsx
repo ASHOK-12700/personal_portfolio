@@ -429,9 +429,10 @@ export const Contact: React.FC = () => {
                <div className="border-t border-white/5 pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                  <p className="text-[10px] text-gray-500 font-mono">TELEMETRY DOC // SOURCE VERIFIED</p>
                  <a
-                   href="https://github.com/ASHOK-12700/my-vault.git"
+                   href="/resume.pdf"
                    target="_blank"
                    rel="noopener noreferrer"
+                   download
                    className="px-6 py-2.5 bg-white text-black hover:bg-gray-200 rounded-full text-[10px] uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95 inline-flex items-center gap-1.5 cursor-pointer font-sans"
                  >
                    <Download size={12} />
