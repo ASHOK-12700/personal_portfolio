@@ -235,19 +235,19 @@ export const Hero: React.FC = () => {
               <Github size={18} />
             </a>
             <a
-              href="https://linkedin.com/in/ashoksrinivassivakiran"
+              href="https://linkedin.com/in/ashok-srinivas-siva-kiran-3647a4315"
               target="_blank"
               rel="noopener noreferrer"
               className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
             >
               <Linkedin size={18} />
             </a>
-            <a
-              href="mailto:ashoksrinivassivakiran.143@gmail.com"
-              className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
-            >
-              <Mail size={18} />
-            </a>
+           <a
+  href="mailto:ashoksrinivassivakiran.143@gmail.com?subject=Portfolio%20Inquiry&body=Hi%20Ashok,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect."
+  className="magnetic hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/5"
+>
+  <Mail size={18} />
+</a>
           </motion.div>
 
         </motion.div>

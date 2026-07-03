@@ -1,45 +1,17 @@
 import React, { useRef, useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, Download, Loader2, ArrowUp, X } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Download, Loader2, ArrowUp } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { useScroll } from './ScrollContainer';
 
-const ResumeSection: React.FC<{ title: string; defaultOpen?: boolean; children: React.ReactNode }> = ({ title, defaultOpen = false, children }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  return (
-    <div className="border border-white/5 bg-white/[0.01] rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/10">
-      <button 
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-5 py-4 flex justify-between items-center text-left text-xs uppercase tracking-widest font-bold text-white/80 hover:text-white transition-colors hover:bg-white/[0.01] cursor-pointer"
-      >
-        <span>{title}</span>
-        <span className="text-[10px] text-gray-500 font-mono">{isOpen ? '[ COLLAPSE ]' : '[ EXPAND ]'}</span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="px-5 pb-5 pt-1">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+// Resume accordion/modal removed — simplified to a single resume button below.
 
 export const Contact: React.FC = () => {
   const { scrollToSection } = useScroll();
   const formRef = useRef<HTMLFormElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const [isResumeOpen, setIsResumeOpen] = useState(false);
+  
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
     type: null,
     message: ''
@@ -177,15 +149,17 @@ export const Contact: React.FC = () => {
             transition={{ delay: 0.35 }}
             className="flex justify-center lg:justify-start"
           >
-            <button
-              type="button"
-              onClick={() => setIsResumeOpen(true)}
+            <a
+              id="resume-link"
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="magnetic px-8 py-3.5 bg-white text-black hover:bg-gray-200 rounded-full text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95 inline-flex items-center gap-2 cursor-pointer font-sans"
               data-cursor-label="Resume"
             >
               <Download size={14} />
-              <span>View My Resume</span>
-            </button>
+              <span><a href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link">View My Resume</a></span>
+            </a>
           </motion.div>
         </div>
 
@@ -297,153 +271,7 @@ export const Contact: React.FC = () => {
         <span>Return to Begin</span>
       </motion.button>
 
-      {/* Dynamic Fullscreen Glass Resume Preview Modal */}
-      <AnimatePresence>
-        {isResumeOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setIsResumeOpen(false)}
-            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-6 bg-black/90 backdrop-blur-2xl"
-          >
-             <motion.div
-               initial={reduceMotion ? { scale: 1, opacity: 1 } : { opacity: 0, scale: 0.96, y: 20 }}
-               animate={{ opacity: 1, scale: 1, y: 0 }}
-               exit={reduceMotion ? { scale: 1, opacity: 1 } : { opacity: 0, scale: 0.96, y: 20 }}
-               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-               className="w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-black/60 border border-white/10 backdrop-blur-3xl rounded-3xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_30px_60px_rgba(0,0,0,0.9)] relative select-text p-6 md:p-10 text-left cinematic-scrollbar"
-               onClick={(e) => e.stopPropagation()}
-             >
-               {/* Close button */}
-               <button
-                 onClick={() => setIsResumeOpen(false)}
-                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 z-10 cursor-pointer shadow-lg"
-               >
-                 <X size={16} />
-               </button>
-
-               {/* Resume Header */}
-               <div className="border-b border-white/5 pb-6 mb-6 text-left">
-                 <span className="text-[9px] uppercase tracking-widest text-white/50 font-bold mb-1.5 block font-mono">PROFESSIONAL DOSSIER</span>
-                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans leading-none mb-2">
-                   Ashok Srinivas Siva Kiran
-                 </h2>
-                 <p className="text-xs text-indigo-400 font-sans tracking-wide font-medium mb-4">
-                   Immersive Systems Engineer & DevOps Specialist
-                 </p>
-                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] text-gray-400 font-mono">
-                   <span>Email: ashoksrinivassivakiran.143@gmail.com</span>
-                   <span>Phone: +91 95817 20429</span>
-                   <span>Location: East Godavari, AP, IN</span>
-                 </div>
-               </div>
-
-               {/* Interactive Accordion Sections */}
-               <div className="space-y-4">
-                 
-                 {/* 1. Academic path */}
-                 <ResumeSection title="Academic Path" defaultOpen={true}>
-                   <div className="space-y-4 pl-4 border-l border-white/10">
-                     <div className="relative group text-[11px] sm:text-xs">
-                       <h5 className="font-semibold text-white leading-tight">B.Tech - Computer Science Engineering (3rd Year)</h5>
-                       <p className="text-gray-400 font-sans">Srinivasa Institute of Engineering and Technology</p>
-                       <span className="text-[9px] text-gray-500 font-mono">2023 - Present | Active Pursuit</span>
-                     </div>
-                     <div className="relative group text-[11px] sm:text-xs">
-                       <h5 className="font-semibold text-white leading-tight">Intermediate Education (MPC)</h5>
-                       <p className="text-gray-400 font-sans">VVS Narayana Raju Junior College</p>
-                       <span className="text-[9px] text-gray-500 font-mono">2021 - 2023 | Completed</span>
-                     </div>
-                   </div>
-                 </ResumeSection>
-
-                 {/* 2. Internships */}
-                 <ResumeSection title="Professional Internships" defaultOpen={false}>
-                   <div className="space-y-4 pl-4 border-l border-indigo-500/20">
-                     <div className="text-[11px] sm:text-xs">
-                       <h5 className="font-semibold text-white leading-tight">Web Development Intern</h5>
-                       <p className="text-gray-300 font-sans font-medium">Shadowfox Technologies</p>
-                       <p className="text-gray-400 font-light mt-1 leading-snug">Developed fluid responsive client interfaces including e-commerce structures, medical portals, and portfolio projects.</p>
-                       <span className="text-[9px] text-gray-500 font-mono">Nov 2024 - Dec 2024</span>
-                     </div>
-                     <div className="text-[11px] sm:text-xs">
-                       <h5 className="font-semibold text-white leading-tight">MERN Stack Intern</h5>
-                       <p className="text-gray-300 font-sans font-medium">Smart Bridge</p>
-                       <p className="text-gray-400 font-light mt-1 leading-snug">Created full-stack deployment architectures (MongoDB, Express, React, Node.js) for Doctor Booking systems.</p>
-                       <span className="text-[9px] text-gray-500 font-mono">Oct 2024 - Nov 2024</span>
-                     </div>
-                   </div>
-                 </ResumeSection>
-
-                 {/* 3. Technical Core Skills */}
-                 <ResumeSection title="Technical Vectors" defaultOpen={false}>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px] sm:text-xs">
-                     <div className="bg-white/[0.02] border border-white/5 p-3.5 rounded-xl">
-                       <h5 className="font-bold text-white/80 uppercase tracking-widest text-[9px] mb-2 font-mono">Frontend / Interface</h5>
-                       <div className="flex flex-wrap gap-1.5">
-                         {['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS'].map(s => (
-                           <span key={s} className="px-2 py-0.5 border border-white/10 bg-white/5 text-[9px] rounded font-mono text-gray-300">{s}</span>
-                         ))}
-                       </div>
-                     </div>
-                     <div className="bg-white/[0.02] border border-white/5 p-3.5 rounded-xl">
-                       <h5 className="font-bold text-white/80 uppercase tracking-widest text-[9px] mb-2 font-mono">Systems / DevOps</h5>
-                       <div className="flex flex-wrap gap-1.5">
-                         {['AWS Services', 'Docker Containers', 'CI/CD Pipelines', 'Linux Systems', 'Git & Version'].map(s => (
-                           <span key={s} className="px-2 py-0.5 border border-indigo-500/10 bg-indigo-950/20 text-[9px] rounded font-mono text-indigo-300">{s}</span>
-                         ))}
-                       </div>
-                     </div>
-                   </div>
-                 </ResumeSection>
-
-                 {/* 4. Credentials & Achievements */}
-                 <ResumeSection title="Dossier Achievements" defaultOpen={false}>
-                   <ul className="space-y-2.5 text-[11px] sm:text-xs text-gray-400">
-                     <li className="flex items-start gap-2.5">
-                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
-                       <div>
-                         <strong className="text-white">1st Prize - VSM College Project Expo:</strong> Developed WiFi Shield ESP8266 low-cost networking threat mitigation device.
-                       </div>
-                     </li>
-                     <li className="flex items-start gap-2.5">
-                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
-                       <div>
-                         <strong className="text-white">2nd Prize - Aditya College Project Expo:</strong> Engineered packet filtering firmware avoiding buffer crashes.
-                       </div>
-                     </li>
-                     <li className="flex items-start gap-2.5">
-                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 flex-shrink-0" />
-                       <div>
-                         <strong className="text-white">Agentic AI Hackathon (Bangalore):</strong> Managed LLM automation tasks, scaling micro-APIs.
-                       </div>
-                     </li>
-                   </ul>
-                 </ResumeSection>
-
-               </div>
-
-               {/* Footer action */}
-               <div className="border-t border-white/5 pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                 <p className="text-[10px] text-gray-500 font-mono">TELEMETRY DOC // SOURCE VERIFIED</p>
-                 <a
-                   href="/resume.pdf"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   download
-                   className="px-6 py-2.5 bg-white text-black hover:bg-gray-200 rounded-full text-[10px] uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95 inline-flex items-center gap-1.5 cursor-pointer font-sans"
-                 >
-                   <Download size={12} />
-                   <span>Download PDF Resume</span>
-                 </a>
-               </div>
-
-             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Resume preview removed — use the resume link/button above. */}
 
     </div>
   );

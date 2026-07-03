@@ -30,7 +30,7 @@ const projects = [
     description: 'CleanCoin is an eco-friendly system incentivizing responsible waste recycling through digital coins. Integrating smart weight-sensing dustbins with an automated mobile catalog, it tracks and validates waste deposits in real time, motivating positive environmental behavior change and promoting green habits.',
     tags: ['React.js', 'Tailwind CSS', 'JavaScript API', 'Eco-friendly IoT'],
     icon: Trash2,
-    status: 'Ongoing Development',
+    status: 'completed',
     statusType: 'active',
     codeLink: 'https://github.com/ashok-12700',
     detailsLink: 'https://cleancoin.lovable.app',

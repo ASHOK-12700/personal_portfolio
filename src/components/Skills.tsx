@@ -8,22 +8,22 @@ const skillCategories = [
     title: 'Frontend Engineering',
     icon: Cpu,
     skills: [
-      { name: 'React', level: 'Expert' },
-      { name: 'Next.js', level: 'Advanced' },
-      { name: 'TypeScript', level: 'Advanced' },
-      { name: 'JavaScript', level: 'Expert' },
-      { name: 'Tailwind CSS', level: 'Expert' }
+      { name: 'React', level: 'Basic' },
+      { name: 'CSS', level: 'Advanced' },
+      { name: 'HTML', level: 'Advanced' },
+      { name: 'JavaScript', level: 'Intermediate' },
+      { name: 'Tailwind CSS', level: 'Intermediate' }
     ]
   },
   {
-    title: 'Mobile & Backend',
+    title: 'Backend Languages & Database',
     icon: Smartphone,
     skills: [
-      { name: 'Kotlin', level: 'Intermediate' },
-      { name: 'Android Dev', level: 'Advanced' },
-      { name: 'Node.js', level: 'Advanced' },
+      { name: 'MangoDB', level: 'Basic' },
+      { name: 'Java', level: 'Intermediate' },
+      { name: 'Python', level: 'Advanced' },
       { name: 'Firebase', level: 'Intermediate' }
-    ]
+    ]  { name: 'Node.js', level: 'Basic' }
   },
   {
     title: 'Cloud & DevOps Systems',
@@ -35,15 +35,16 @@ const skillCategories = [
       { name: 'Terraform (IaC)', level: 'Intermediate' },
       { name: 'Kubernetes basics', level: 'Intermediate' },
       { name: 'Linux Systems & Git', level: 'Expert' }
+      { name: 'Networking', level: 'Intermediate' }
     ]
   },
   {
     title: 'Design & Methodologies',
     icon: Heart,
     skills: [
-      { name: 'Canva Design', level: 'Expert' },
-      { name: 'UI/UX & Branding', level: 'Advanced' },
-      { name: 'Ai Automation', level: 'Advanced' },
+      { name: 'Canva Design', level: 'Intermediate' },
+      { name: 'Thumbnail Editing', level: 'Intermedite' },
+      { name: 'Ai Automation', level: 'Basic' },
       { name: 'Fast Learner', level: 'Native' },
       { name: 'Problem-solving', level: 'Native' }
     ]
