@@ -1,279 +1,264 @@
-import React, { useRef, useState, FormEvent, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, Download, Loader2, ArrowUp } from 'lucide-react';
-import emailjs from '@emailjs/browser';
-import { useScroll } from './ScrollContainer';
+import React, { useState, FormEvent } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, MapPin, Send, FileText, ArrowUp } from 'lucide-react';
 
-// Resume accordion/modal removed — simplified to a single resume button below.
+const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const LinkedinIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
 
 export const Contact: React.FC = () => {
-  const { scrollToSection } = useScroll();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-  
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
-    type: null,
-    message: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
 
-  // Detect prefers-reduced-motion
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduceMotion(mediaQuery.matches);
-    const handleChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  const sendEmail = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setStatus({ type: null, message: '' });
-
-    if (!formRef.current) return;
-
-    // EmailJS credentials lookup
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
-
-    if (serviceId === 'YOUR_SERVICE_ID' || templateId === 'YOUR_TEMPLATE_ID' || publicKey === 'YOUR_PUBLIC_KEY') {
-      // Elegant warning instead of a crash, prompting them to set env variables
-      setStatus({
-        type: 'error',
-        message: 'Telemetry keys offline. Please configure VITE_EMAILJS service, template, and public key variables inside your .env configuration.'
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    emailjs.sendForm(serviceId, templateId, formRef.current, publicKey)
-      .then(() => {
-        setStatus({
-          type: 'success',
-          message: 'Message transmitted successfully.'
-        });
-        formRef.current?.reset();
-      }, (error) => {
-        setStatus({
-          type: 'error',
-          message: `Transmission failure: ${error.text || 'Unknown Error'}. Please retry.`
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    const mailtoSubject = encodeURIComponent(formData.subject || 'Portfolio Inquiry');
+    const mailtoBody = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
+    window.location.href = `mailto:ashoksrinivassivakiran.143@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
+    setSubmitted(true);
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-between items-center px-6 md:px-12 py-10 relative z-10 text-gray-100 select-none">
-      
-      {/* Top spacing helper */}
-      <div className="h-16" />
+    <section id="contact" className="relative w-full py-24 px-6 md:px-12 max-w-7xl mx-auto text-left">
+      {/* High-Impact Display Statement matching reference blueprint */}
+      <div className="mb-20">
+        <p className="text-xs uppercase tracking-[0.25em] text-gray-400 font-mono mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-red-accent animate-pulse" />
+          <span className="text-red-accent mr-1">07</span> Contact &amp; Connect
+        </p>
 
-      {/* Main Container */}
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 my-auto z-10 items-center">
-        
-        {/* Left Side: Telemetry / Coordinates Data */}
-        <div className="lg:col-span-5 flex flex-col text-center lg:text-left">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="text-xs uppercase tracking-cinematic text-gray-400 font-semibold mb-3"
-          >
-            04. Ending Scene
-          </motion.div>
-          
-          <motion.h2
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-sans heading-premium"
-          >
-            Get In Touch
-          </motion.h2>
-
-          {/* Telemetry coordinate details */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="space-y-4 mb-8 text-xs sm:text-sm text-gray-400 font-light max-w-md mx-auto lg:mx-0"
-          >
-            {/* Email block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
-              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
-                <Mail size={16} />
-              </div>
-              <div className="text-left font-mono">
-                <p className="text-[9px] uppercase tracking-widest text-gray-500">EMAIL CHANNEL</p>
-                <a href="mailto:ashoksriivassivakiran.143@gmail.com" className="text-gray-300 hover:text-white transition-colors block text-[11px] sm:text-xs">
-                  ashoksriivassivakiran.143@gmail.com
-                </a>
-              </div>
-            </div>
-
-            {/* Phone block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
-              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
-                <Phone size={16} />
-              </div>
-              <div className="text-left font-mono">
-                <p className="text-[9px] uppercase tracking-widest text-gray-500">VOICE MATRIX</p>
-                <p className="text-gray-300 text-[11px] sm:text-xs">+91 95817 20429 / +91 99665 75468</p>
-              </div>
-            </div>
-
-            {/* Geo block */}
-            <div className="group glass-panel p-4 rounded-xl flex items-center gap-4 border border-white/10 bg-white/[0.02] hover:border-indigo-500/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.03)] transition-all duration-300">
-              <div className="p-2 bg-white/5 rounded-lg text-white/60 group-hover:text-white transition-colors duration-300">
-                <MapPin size={16} />
-              </div>
-              <div className="text-left font-mono">
-                <p className="text-[9px] uppercase tracking-widest text-gray-500">COORDINATES</p>
-                <p className="text-gray-300 text-[11px] sm:text-xs">East Godavari, AP, IN</p>
-                <p className="text-[9px] text-gray-500 font-mono">[GEO // 16.7335° N, 82.2144° E]</p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Resume button */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.35 }}
-            className="flex justify-center lg:justify-start"
-          >
-            <a
-              id="resume-link"
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="magnetic px-8 py-3.5 bg-white text-black hover:bg-gray-200 rounded-full text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-white/5 transition-all duration-200 active:scale-95 inline-flex items-center gap-2 cursor-pointer font-sans"
-              data-cursor-label="Resume"
-            >
-              <Download size={14} />
-              <span><a href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link">View My Resume</a></span>
-            </a>
-          </motion.div>
-        </div>
-
-        {/* Right Side: Sleek Contact Form */}
-        <div className="lg:col-span-7 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="glass-panel p-6 sm:p-8 rounded-3xl w-full text-left relative overflow-hidden"
-          >
-            {/* Ambient form backlight overlay */}
-            <div className="absolute top-1/2 left-1/2 w-[350px] h-[350px] rounded-full bg-violet-500/5 blur-[80px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-0" />
-
-            <form ref={formRef} onSubmit={sendEmail} className="space-y-4 relative z-10">
-              <div>
-                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Your Identity</label>
-                <input
-                  type="text"
-                  name="user_name"
-                  required
-                  placeholder="Enter your name"
-                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Email Channel</label>
-                <input
-                  type="email"
-                  name="user_email"
-                  required
-                  placeholder="Enter your email address"
-                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Subject Matrix</label>
-                <input
-                  type="text"
-                  name="user_subject"
-                  required
-                  placeholder="Enter message subject"
-                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 font-sans relative z-10"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5 font-mono">Transmission Description</label>
-                <textarea
-                  name="message"
-                  required
-                  rows={4}
-                  placeholder="Write a message or project brief..."
-                  className="w-full bg-white/[0.02] border border-white/10 focus:border-indigo-500/30 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)] focus:bg-white/[0.04] rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none transition-all duration-300 placeholder-gray-600 h-28 resize-none font-sans relative z-10"
-                />
-              </div>
-
-              {/* Status Alert */}
-              <AnimatePresence mode="wait">
-                {status.message && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className={`p-3.5 rounded-xl text-xs font-light leading-snug font-mono ${
-                      status.type === 'success' ? 'bg-white/5 border border-white/10 text-white' : 'bg-red-950/20 border border-red-900/30 text-red-400'
-                    }`}
-                  >
-                    {status.message}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Action Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="magnetic w-full py-3.5 luxury-btn luxury-btn-primary rounded-full text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-95 shadow-md shadow-white/5"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin text-black" />
-                    <span>Broadcasting...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send size={14} className="text-black" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </button>
-            </form>
-          </motion.div>
-        </div>
-
+        <h2 className="text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-none font-sans uppercase">
+          LET&apos;S BUILD{' '}
+          <span className="block mt-2">
+            SOMETHING{' '}
+            <em className="font-serif-italic font-normal text-red-accent lowercase text-5xl sm:text-8xl lg:text-9xl">
+              great.
+            </em>
+          </span>
+        </h2>
       </div>
 
-      {/* Floating restart indicator */}
-      <motion.button
-        onClick={() => scrollToSection(0)}
-        whileHover={reduceMotion ? {} : { y: -4 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-colors duration-300 font-sans text-[9px] uppercase tracking-cinematic py-2 z-10 group cursor-pointer"
-      >
-        <ArrowUp size={12} className="text-white/50 group-hover:text-white transition-colors duration-300" />
-        <span>Return to Begin</span>
-      </motion.button>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Side — Direct Channels & Socials */}
+        <div className="lg:col-span-5 space-y-8">
+          <div>
+            <h3 className="text-xl font-bold text-white font-sans mb-3">Direct Contact Channels</h3>
+            <p className="text-sm text-gray-400 font-light leading-relaxed">
+              Available for full-time cloud engineering, DevOps automation roles, and innovative tech collaborations.
+            </p>
+          </div>
 
-      {/* Resume preview removed — use the resume link/button above. */}
+          <div className="space-y-4 font-mono text-xs">
+            {/* Email */}
+            <a
+              href="mailto:ashoksrinivassivakiran.143@gmail.com"
+              className="editorial-card p-4 rounded-2xl flex items-center gap-4 group block hover:border-white/30"
+            >
+              <div className="p-3 rounded-xl bg-white/5 text-red-accent border border-white/10 group-hover:scale-110 transition-transform">
+                <Mail size={18} />
+              </div>
+              <div className="overflow-hidden">
+                <div className="text-[10px] uppercase text-gray-500">EMAIL CHANNEL</div>
+                <div className="text-white font-semibold truncate">ashoksrinivassivakiran.143@gmail.com</div>
+              </div>
+            </a>
 
-    </div>
+            {/* Phone */}
+            <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-white/5 text-indigo-400 border border-white/10">
+                <Phone size={18} />
+              </div>
+              <div>
+                <div className="text-[10px] uppercase text-gray-500">VOICE CONTACT</div>
+                <div className="text-white font-semibold">+91 95817 20429 / +91 99665 75468</div>
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-white/5 text-emerald-400 border border-white/10">
+                <MapPin size={18} />
+              </div>
+              <div>
+                <div className="text-[10px] uppercase text-gray-500">LOCATION &amp; COORDINATES</div>
+                <div className="text-white font-semibold">East Godavari, Andhra Pradesh, India</div>
+                <div className="text-[9px] text-gray-500">[16.7335° N, 82.2144° E]</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Profiles */}
+          <div className="pt-4 border-t border-white/10 flex flex-wrap gap-4">
+            <a
+              href="https://github.com/ashok-12700"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-2 transition-colors"
+            >
+              <GithubIcon size={14} />
+              <span>GitHub</span>
+            </a>
+
+            <a
+              href="https://linkedin.com/in/ashok-srinivas-siva-kiran-3647a4315"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-2 transition-colors"
+            >
+              <LinkedinIcon size={14} />
+              <span>LinkedIn</span>
+            </a>
+
+            <a
+              href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-white text-black rounded-full text-xs font-mono font-bold uppercase tracking-widest hover:bg-gray-200 flex items-center gap-2 transition-colors"
+            >
+              <FileText size={14} />
+              <span>Resume ↗</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Right Side — High Impact Contact Form */}
+        <div className="lg:col-span-7">
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            onSubmit={handleSubmit}
+            className="editorial-card p-8 rounded-3xl space-y-6 relative overflow-hidden"
+          >
+            <div>
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
+                YOUR NAME / ORGANIZATION
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter your name"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
+                EMAIL ADDRESS
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="Enter your email"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
+                SUBJECT
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                placeholder="Message topic or inquiry"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
+                MESSAGE
+              </label>
+              <textarea
+                required
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Write your project details or message..."
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors resize-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 bg-white text-black font-mono font-bold text-xs uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 shadow-lg"
+            >
+              <Send size={14} />
+              <span>{submitted ? 'Opening Mail Client...' : 'Send Message'}</span>
+            </button>
+          </motion.form>
+        </div>
+      </div>
+    </section>
   );
 };
+
+export const Footer: React.FC = () => {
+  return (
+    <footer className="w-full py-12 px-6 md:px-12 border-t border-white/10 bg-[#030305] text-left">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-gray-500">
+        <div>
+          <span className="text-white font-semibold">ASHOK SRINIVAS SIVA KIRAN</span>
+          <span className="mx-2">·</span>
+          <span>© 2026. All rights reserved.</span>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <a href="#home" className="hover:text-white transition-colors">Home</a>
+          <a href="#about" className="hover:text-white transition-colors">About</a>
+          <a href="#work" className="hover:text-white transition-colors">Work</a>
+          <a href="#/certificates" className="hover:text-white transition-colors">Certificates</a>
+          <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+        </div>
+
+        <a
+          href="#home"
+          className="p-3 rounded-full bg-white/5 border border-white/10 hover:border-white/30 text-gray-400 hover:text-white transition-colors"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={16} />
+        </a>
+      </div>
+    </footer>
+  );
+};
+
 export default Contact;

@@ -1,143 +1,137 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import { useScroll } from './ScrollContainer';
 
-const navLinks = [
-  { name: 'Intro', index: 0 },
-  { name: 'About', index: 1 },
-  { name: 'Skills', index: 2 },
-  { name: 'Projects', index: 3 },
-  { name: 'Contact', index: 4 },
-  { name: 'Certificates', index: 5 }
-];
+interface NavbarProps {
+  activeSection?: string;
+}
 
-export const Navbar: React.FC = () => {
-  const { activeSection, scrollToSection } = useScroll();
+export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCertificatesRoute, setIsCertificatesRoute] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const checkRoute = () => {
-      const hash = window.location.hash;
-      const path = window.location.pathname;
-      setIsCertificatesRoute(
-        hash === '#/certificates' || 
-        hash === '#/certifications' || 
-        path === '/certificates' || 
-        path === '/certifications'
-      );
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
     };
-
-    checkRoute();
-    window.addEventListener('popstate', checkRoute);
-    window.addEventListener('hashchange', checkRoute);
-
-    return () => {
-      window.removeEventListener('popstate', checkRoute);
-      window.removeEventListener('hashchange', checkRoute);
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (linkIndex: number) => {
-    if (linkIndex === 5) {
-      window.location.hash = '#/certificates';
-      window.dispatchEvent(new Event('popstate'));
-    } else {
-      scrollToSection(linkIndex);
-    }
-  };
-
-  const isLinkActive = (linkIndex: number) => {
-    if (isCertificatesRoute) {
-      return linkIndex === 5;
-    }
-    return activeSection === linkIndex;
-  };
+  const navLinks = [
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Journey', href: '#journey' },
+    { name: 'Toolkit', href: '#toolkit' },
+    { name: 'Work', href: '#work' },
+    { name: 'Certificates', href: '#/certificates' },
+    { name: 'Contact', href: '#contact' },
+  ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-[999] py-4 px-6 md:px-12 select-none pointer-events-none">
-      <div className="max-w-6xl mx-auto w-full flex justify-between items-center bg-white/[0.04] border border-white/10 backdrop-blur-xl rounded-full py-2.5 px-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto transition-colors duration-300">
-        
-        {/* Left Side Logo & Telemetry */}
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-[#050507]/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl'
+          : 'bg-transparent py-5'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+        {/* Brand Logo matching reference */}
+        <a
+          href="#home"
+          className="text-lg md:text-xl font-bold tracking-tight text-white font-sans flex items-center gap-1 group"
+        >
+          <span>ASHOK</span>
+          <span className="text-red-accent font-serif-italic text-2xl group-hover:scale-125 transition-transform duration-300">
+            .
+          </span>
+        </a>
+
+        {/* Desktop Links with Text Roll animation matching reference */}
+        <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.href.replace('#', '').replace('/', '');
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`text-xs uppercase tracking-widest font-mono relative py-1 group ${
+                  isActive ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <span className="relative overflow-hidden inline-block">
+                  <span className="block transition-transform duration-300 group-hover:-translate-y-full">
+                    {link.name}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-0 left-0 transition-transform duration-300 translate-y-full group-hover:translate-y-0 text-white font-semibold"
+                  >
+                    {link.name}
+                  </span>
+                </span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-red-accent rounded-full" />
+                )}
+              </a>
+            );
+          })}
+        </nav>
+
+        {/* Right CTA / Mobile Toggle */}
         <div className="flex items-center gap-4">
-          <div 
-            onClick={() => handleNavClick(0)}
-            className="flex items-center gap-2 cursor-pointer group magnetic pointer-events-auto"
+          <a
+            href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex text-xs uppercase tracking-widest font-mono px-4 py-2 border border-white/15 rounded-full text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-300"
           >
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-white/10 group-hover:border-white/30 transition-colors duration-500">
-              <img
-                src="https://i.postimg.cc/hGcfBpXG/Gemini-Generated-Image-3a15ma3a15ma3a15.png"
-                alt="Logo"
-                className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-              />
-            </div>
-            <div className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-white transition-colors duration-300">
-              Ashok <span className="text-gray-400 font-light lowercase">srinivas</span>
-            </div>
-          </div>
+            Resume ↗
+          </a>
 
-          {/* Subtle Telemetry Beacon */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[8px] font-mono text-gray-500 select-none">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
-            </span>
-            <span>SYS ACTIVE // LATENCY: 24MS</span>
-          </div>
-        </div>
-
-        {/* Right Side: Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.index}
-              onClick={() => handleNavClick(link.index)}
-              className={`text-[10px] uppercase tracking-widest font-bold font-sans transition-all duration-500 relative py-1 cursor-pointer hover:-translate-y-[1px] hover:scale-[1.03] ${
-                isLinkActive(link.index) ? 'text-white' : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              {link.name}
-              {isLinkActive(link.index) && (
-                <span className="absolute bottom-[-2px] left-0 w-full h-[1.5px] bg-gradient-to-r from-white/60 via-white to-white/60 shadow-[0_0_8px_rgba(255,255,255,0.8)] rounded-full" />
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Mobile Menu Toggle Button */}
-        <div className="md:hidden">
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center cursor-pointer"
+          {/* Mobile Menu Hamburger */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg bg-white/5 border border-white/10"
           >
-            {isOpen ? <X size={18} /> : <Menu size={18} />}
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Full Screen Menu Overlay */}
+      {/* Mobile Drawer Sheet */}
       {isOpen && (
-        <div className="md:hidden fixed inset-0 w-full h-screen bg-black/95 backdrop-blur-xl z-[-1] flex flex-col justify-center items-center pointer-events-auto transition-opacity duration-300">
-          <div className="flex flex-col gap-8 text-center">
+        <div className="md:hidden fixed inset-0 top-[60px] bg-[#050507]/95 backdrop-blur-2xl z-40 flex flex-col p-8 border-t border-white/10">
+          <nav className="flex flex-col gap-6 text-left">
             {navLinks.map((link) => (
-              <button
-                key={link.index}
-                onClick={() => {
-                  setIsOpen(false);
-                  setTimeout(() => handleNavClick(link.index), 200);
-                }}
-                className={`text-lg uppercase tracking-widest font-bold font-sans transition-all duration-300 ${
-                  isLinkActive(link.index) ? 'text-white border-b border-white pb-1' : 'text-gray-300 hover:text-white'
-                }`}
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="text-lg uppercase tracking-widest font-mono text-gray-300 hover:text-white border-b border-white/5 pb-3"
               >
                 {link.name}
-              </button>
+              </a>
             ))}
-          </div>
+            <a
+              href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 text-center text-xs uppercase tracking-widest font-mono py-3 bg-white text-black font-bold rounded-full"
+            >
+              View Resume ↗
+            </a>
+          </nav>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
-export default Navbar;
 
+export default Navbar;
