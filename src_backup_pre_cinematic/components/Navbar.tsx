@@ -23,10 +23,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
 
   const navLinks = [
     { name: 'Home', href: '#home' },
-    { name: 'Education', href: '#education' },
-    { name: 'Skills', href: '#toolkit' },
-    { name: 'Projects', href: '#work' },
-    { name: 'Achievements', href: '#archive' },
+    { name: 'About', href: '#about' },
+    { name: 'Journey', href: '#journey' },
+    { name: 'Toolkit', href: '#toolkit' },
+    { name: 'Work', href: '#work' },
+    { name: 'Certificates', href: '#/certificates' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -34,12 +35,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#050507]/80 backdrop-blur-xl border-b border-white/5 py-3 shadow-2xl'
+          ? 'bg-[#050507]/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl'
           : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-        {/* Brand Logo */}
+        {/* Brand Logo matching reference */}
         <a
           href="#home"
           className="text-lg md:text-xl font-bold tracking-tight text-white font-sans flex items-center gap-1 group"
@@ -50,12 +51,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
           </span>
         </a>
 
-        {/* Desktop Links with Text Roll animation */}
+        {/* Desktop Links with Text Roll animation matching reference */}
         <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
           {navLinks.map((link) => {
-            const isHomeActive = activeSection === 'home' || activeSection === 'about';
-            const isActive = link.href === '#home' ? isHomeActive : activeSection === link.href.replace('#', '');
-            
+            const isActive = activeSection === link.href.replace('#', '').replace('/', '');
             return (
               <a
                 key={link.name}
@@ -108,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'home' }) => {
 
       {/* Mobile Drawer Sheet */}
       {isOpen && (
-        <div className="md:hidden fixed inset-0 top-[60px] bg-[#050507]/95 backdrop-blur-2xl z-40 flex flex-col p-8 border-t border-white/5">
+        <div className="md:hidden fixed inset-0 top-[60px] bg-[#050507]/95 backdrop-blur-2xl z-40 flex flex-col p-8 border-t border-white/10">
           <nav className="flex flex-col gap-6 text-left">
             {navLinks.map((link) => (
               <a

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Smartphone, Cpu, ShieldCheck, Trash2, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
@@ -32,7 +32,6 @@ interface Project {
   live?: string;
   highlights: string[];
   architecture: string;
-  isFlagship?: boolean;
 }
 
 const projects: Project[] = [
@@ -47,7 +46,6 @@ const projects: Project[] = [
     tags: ['Android Native', 'Kotlin', 'SpeechRecognizer', 'Text-to-Speech (TTS)', 'Wake-Word Engine', 'AI Intent Parser'],
     icon: Smartphone,
     github: 'https://github.com/ashok-12700',
-    isFlagship: true,
     highlights: [
       'Hands-free wake-word detection & continuous voice pipeline',
       'App launching shortcuts, automated phone call triggers & SMS sending',
@@ -68,7 +66,6 @@ const projects: Project[] = [
     tags: ['React.js', 'TypeScript', 'Tailwind CSS', 'Speech Analysis', 'LLM Prompting', 'Interview Automation'],
     icon: Cpu,
     github: 'https://github.com/ashok-12700',
-    isFlagship: true,
     highlights: [
       'Adaptive technical & HR question generation tailored to candidate role',
       'Real-time speech clarity, pacing, and sentiment analysis feedback',
@@ -122,157 +119,374 @@ const projects: Project[] = [
 ];
 
 export const Portfolio: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
+  // Hook into scroll progress of the entire portfolio section (height 400vh)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Calculate active project index from scroll progress
+  const activeIdx = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [0, 0, 1, 2, 3]);
+
+  // Project 01 (Max Assistant) Transforms
+  const op1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [1, 1, 0]);
+  const scale1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [1, 1.05, 0.8]);
+  const rotY1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [8, -8, -15]);
+  const y1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [0, -20, -100]);
+  const z1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [0, 50, -200]);
+
+  // Project 02 (ResearchAI) Transforms
+  const op2 = useTransform(scrollYProgress, [0.18, 0.25, 0.45, 0.52], [0, 1, 1, 0]);
+  const scale2 = useTransform(scrollYProgress, [0.18, 0.25, 0.45, 0.52], [0.8, 1, 1.02, 0.8]);
+  const rotY2 = useTransform(scrollYProgress, [0.18, 0.25, 0.45, 0.52], [-15, 8, -8, 15]);
+  const y2 = useTransform(scrollYProgress, [0.18, 0.25, 0.45, 0.52], [100, 0, -20, -100]);
+  const z2 = useTransform(scrollYProgress, [0.18, 0.25, 0.45, 0.52], [-150, 0, 40, -150]);
+
+  // Project 03 (Wi-Fi Security) Transforms
+  const op3 = useTransform(scrollYProgress, [0.44, 0.5, 0.7, 0.76], [0, 1, 1, 0]);
+  const scale3 = useTransform(scrollYProgress, [0.44, 0.5, 0.7, 0.76], [0.8, 1, 1.02, 0.8]);
+  const rotX3 = useTransform(scrollYProgress, [0.44, 0.5, 0.7, 0.76], [15, 0, -5, -15]);
+  const y3 = useTransform(scrollYProgress, [0.44, 0.5, 0.7, 0.76], [100, 0, -20, -100]);
+  const z3 = useTransform(scrollYProgress, [0.44, 0.5, 0.7, 0.76], [-150, 0, 40, -150]);
+
+  // Project 04 (CleanCoin) Transforms
+  const op4 = useTransform(scrollYProgress, [0.69, 0.75, 1], [0, 1, 1]);
+  const scale4 = useTransform(scrollYProgress, [0.69, 0.75, 1], [0.8, 1, 1]);
+  const rotY4 = useTransform(scrollYProgress, [0.69, 0.75, 1], [15, -8, 0]);
+  const y4 = useTransform(scrollYProgress, [0.69, 0.75, 1], [100, 0, 0]);
+  const z4 = useTransform(scrollYProgress, [0.69, 0.75, 1], [-150, 0, 0]);
+
+  const pTransforms = [
+    { op: op1, scale: scale1, rotY: rotY1, rotX: 0, y: y1, z: z1 },
+    { op: op2, scale: scale2, rotY: rotY2, rotX: 0, y: y2, z: z2 },
+    { op: op3, scale: scale3, rotY: 0, rotX: rotX3, y: y3, z: z3 },
+    { op: op4, scale: scale4, rotY: rotY4, rotX: 0, y: y4, z: z4 },
+  ];
+
   return (
-    <section id="work" className="relative w-full py-24 px-6 md:px-12 max-w-7xl mx-auto text-left">
-      {/* Header matching reference blueprint */}
-      <div className="mb-20 max-w-3xl">
-        <p className="text-xs uppercase tracking-[0.25em] text-gray-400 font-mono mb-3">
-          <span className="text-red-accent mr-2">04</span> Featured Work
-        </p>
-        <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight font-sans">
-          Selected{' '}
-          <em className="font-serif-italic font-normal text-red-accent">
-            Projects.
-          </em>
-        </h2>
-        <p className="mt-4 text-sm sm:text-base text-gray-400 font-light leading-relaxed">
-          Major engineering achievements across Android AI Voice Assistants, Web AI Platforms, IoT Network Security, and Cloud Applications.
-        </p>
-      </div>
-
-      {/* Large Project Presentation Layout matching reference blueprint */}
-      <div className="space-y-24">
-        {projects.map((proj) => (
-          <motion.article
-            key={proj.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className={`editorial-card rounded-3xl p-8 lg:p-12 relative overflow-hidden group ${
-              proj.isFlagship ? 'border-red-accent/30 bg-[#09090e]/80' : ''
-            }`}
-          >
-            {/* Ambient Corner Glow */}
-            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-red-accent/5 blur-[100px] pointer-events-none group-hover:bg-red-accent/10 transition-all duration-700" />
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
-              {/* Left Details */}
-              <div className="lg:col-span-7 flex flex-col justify-between h-full">
-                <div>
-                  {/* Category & Number Header */}
+    <div ref={sectionRef} id="work" className="relative w-full h-[400vh]">
+      {/* Sticky layout framing */}
+      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden bg-[#050507] flex flex-col justify-center px-6 md:px-12">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full pt-16 pb-12">
+          
+          {/* Left Side Details Column */}
+          <div className="lg:col-span-6 flex flex-col justify-between h-auto lg:h-[75%] border-b lg:border-b-0 lg:border-r border-white/5 pb-6 lg:pb-0 lg:pr-10 relative z-20 bg-[#050507]/90">
+            {projects.map((proj, idx) => {
+              const trans = pTransforms[idx];
+              return (
+                <motion.div
+                  key={proj.id}
+                  style={{
+                    opacity: trans.op,
+                    y: trans.y,
+                    pointerEvents: scrollYProgress.get() >= (idx * 0.25) && scrollYProgress.get() < ((idx + 1) * 0.25) ? 'auto' : 'none',
+                  }}
+                  className="absolute inset-x-0 top-0 pr-0 lg:pr-6"
+                >
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-4xl lg:text-5xl font-bold font-mono text-white/30 group-hover:text-red-accent transition-colors duration-500">
+                    <span className="text-4xl sm:text-5xl font-extrabold font-mono text-white/20">
                       {proj.number}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest font-mono px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full">
+                    <span className="text-[9px] uppercase tracking-widest font-mono px-3 py-1 bg-white/5 border border-white/10 text-gray-400 rounded-full font-semibold">
                       {proj.category}
                     </span>
                   </div>
 
-                  <p className="text-xs font-mono uppercase text-gray-400 mb-1">
+                  <p className="text-[10px] font-mono uppercase text-red-accent/80 tracking-widest mb-1.5">
                     {proj.subtitle}
                   </p>
-                  <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight font-sans mb-4 group-hover:text-white transition-colors">
+                  <h3 className="text-2xl sm:text-3.5xl font-bold text-white tracking-tight font-sans mb-4">
                     {proj.title}
                   </h3>
 
-                  <p className="text-sm sm:text-base text-gray-300 font-light leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed mb-6">
                     {proj.description}
                   </p>
 
-                  {/* Highlights Bullet List */}
-                  <div className="space-y-2 mb-8">
-                    {proj.highlights.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-gray-400">
-                        <CheckCircle2 size={16} className="text-red-accent flex-shrink-0 mt-0.5" />
+                  {/* Highlights */}
+                  <div className="space-y-2 mb-6">
+                    {proj.highlights.map((item, hIdx) => (
+                      <div key={hIdx} className="flex items-start gap-2 text-xs text-gray-400">
+                        <CheckCircle2 size={14} className="text-red-accent flex-shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </div>
                     ))}
                   </div>
 
-                  {/* Tech Tag Chips */}
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {proj.tags.map((t, idx) => (
+                  {/* Tech Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-6">
+                    {proj.tags.map((t, tIdx) => (
                       <span
-                        key={idx}
-                        className="text-[10px] font-mono text-gray-300 px-3 py-1 bg-white/5 border border-white/10 rounded-md"
+                        key={tIdx}
+                        className="text-[9px] font-mono text-gray-400 px-2 py-0.5 bg-white/5 border border-white/10 rounded"
                       >
                         {t}
                       </span>
                     ))}
                   </div>
-                </div>
 
-                {/* Actions Bar */}
-                <div className="flex flex-wrap items-center gap-4 border-t border-white/10 pt-6">
-                  <button
-                    type="button"
-                    onClick={() => setActiveProject(proj)}
-                    className="px-6 py-2.5 bg-white text-black font-semibold text-xs uppercase tracking-widest font-mono rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2"
-                  >
-                    <span>View Case Study</span>
-                    <ArrowUpRight size={14} />
-                  </button>
+                  {/* Actions */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => setActiveProject(proj)}
+                      className="px-5 py-2.5 bg-white text-black font-bold text-[10px] uppercase tracking-widest font-mono rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1.5 shadow"
+                    >
+                      <span>Case Study</span>
+                      <ArrowUpRight size={12} />
+                    </button>
 
-                  <a
-                    href={proj.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-2.5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 font-mono text-xs uppercase tracking-widest rounded-full transition-all flex items-center gap-2"
-                  >
-                    <GithubIcon size={14} />
-                    <span>Source Code</span>
-                  </a>
-
-                  {proj.live && (
                     <a
-                      href={proj.live}
+                      href={proj.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-5 py-2.5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 font-mono text-xs uppercase tracking-widest rounded-full transition-all flex items-center gap-2"
+                      className="px-4 py-2.5 border border-white/15 text-gray-400 hover:text-white hover:border-white/30 font-mono text-[10px] uppercase tracking-widest rounded-full transition-all flex items-center gap-1.5"
                     >
-                      <ExternalLink size={14} />
-                      <span>Live Site</span>
+                      <GithubIcon size={12} />
+                      <span>Code</span>
                     </a>
-                  )}
-                </div>
-              </div>
 
-              {/* Right Media / Feature Frame */}
-              <div className="lg:col-span-5 flex flex-col justify-center">
-                <div className="w-full aspect-[4/3] rounded-2xl border border-white/15 bg-black/80 overflow-hidden relative group-hover:border-white/30 transition-all duration-500 flex flex-col justify-between p-6 shadow-2xl">
-                  {/* Decorative Frame Elements */}
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3 font-mono text-[10px] text-gray-400">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-red-accent animate-pulse" />
-                      SYSTEM STATUS // ACTIVE
-                    </span>
-                    <span>{proj.id.toUpperCase()}</span>
+                    {proj.live && (
+                      <a
+                        href={proj.live}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2.5 border border-white/15 text-gray-400 hover:text-white hover:border-white/30 font-mono text-[10px] uppercase tracking-widest rounded-full transition-all flex items-center gap-1.5"
+                      >
+                        <ExternalLink size={12} />
+                        <span>Live</span>
+                      </a>
+                    )}
                   </div>
+                </motion.div>
+              );
+            })}
 
-                  <div className="my-auto text-center px-4">
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 inline-block text-red-accent mb-3">
-                      <proj.icon size={36} />
-                    </div>
-                    <h4 className="text-lg font-bold text-white font-sans">{proj.title}</h4>
-                    <p className="text-xs text-gray-400 font-mono mt-1">{proj.subtitle}</p>
-                  </div>
-
-                  <div className="border-t border-white/10 pt-3 flex items-center justify-between text-[10px] font-mono text-gray-500">
-                    <span>ARCHITECTURE TYPE</span>
-                    <span className="text-gray-300">PRODUCTION VERIFIED</span>
-                  </div>
-                </div>
+            {/* Static Bottom indicator placeholder */}
+            <div className="mt-auto pt-6 text-[10px] font-mono text-gray-500 flex items-center justify-between relative z-10">
+              <span>SELECTED PROJECTS // FOUR SCENES</span>
+              <div className="flex gap-1.5">
+                {[0, 1, 2, 3].map((num) => (
+                  <span
+                    key={num}
+                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                      Math.floor(activeIdx.get()) === num ? 'bg-red-accent' : 'bg-white/10'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
-          </motion.article>
-        ))}
+          </div>
+
+          {/* Right Column: 3D Visual Stage */}
+          <div 
+            className="lg:col-span-6 relative w-full h-[40vh] sm:h-[35vh] lg:h-[70vh] flex items-center justify-center"
+            style={{ perspective: '1600px', transformStyle: 'preserve-3d' }}
+          >
+            {/* Project 01 — 3D Mobile Frame Mockup */}
+            <motion.div
+              style={{
+                opacity: op1,
+                scale: scale1,
+                rotateY: rotY1,
+                z: z1,
+                transformStyle: 'preserve-3d',
+              }}
+              className="absolute w-52 h-88 sm:w-60 sm:h-100 border-4 border-white/10 bg-[#09090e] rounded-[2.5rem] shadow-2xl flex flex-col p-3 overflow-hidden transform-gpu"
+            >
+              {/* Phone Notch */}
+              <div className="w-20 h-4 bg-black border border-white/10 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <span className="w-1.5 h-1.5 bg-indigo-900 rounded-full" />
+              </div>
+
+              {/* Screen Content Mockup */}
+              <div className="flex-1 rounded-[1.8rem] bg-black border border-white/5 flex flex-col p-4 justify-between font-mono relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-red-accent/10 rounded-full blur-[40px] pointer-events-none" />
+                
+                {/* Upper bar */}
+                <div className="flex items-center justify-between text-[8px] text-gray-500 border-b border-white/5 pb-2">
+                  <span>MAX VOICE AI v1.0</span>
+                  <span className="text-red-accent">ACTIVE</span>
+                </div>
+
+                {/* AI Speech Wave lines */}
+                <div className="flex flex-col gap-2 my-auto">
+                  <div className="text-[10px] text-white/60 mb-2">Intent Parser logs:</div>
+                  <div className="h-1 bg-white/20 rounded-full overflow-hidden">
+                    <motion.div animate={{ x: [-100, 100] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="h-full w-24 bg-red-accent" />
+                  </div>
+                  <div className="h-1 bg-white/20 rounded-full overflow-hidden">
+                    <motion.div animate={{ x: [100, -100] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} className="h-full w-20 bg-indigo-500" />
+                  </div>
+                  <div className="text-[9px] text-gray-500 mt-2">Listening for: "Max, check Docker status..."</div>
+                </div>
+
+                {/* Micro tech info */}
+                <div className="text-[8px] text-gray-600 flex justify-between border-t border-white/5 pt-2">
+                  <span>LATENCY: 140ms</span>
+                  <span>KOTLIN CORE</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Project 02 — 3D Browser Frame Mockup */}
+            <motion.div
+              style={{
+                opacity: op2,
+                scale: scale2,
+                rotateY: rotY2,
+                z: z2,
+                transformStyle: 'preserve-3d',
+              }}
+              className="absolute w-72 h-56 sm:w-100 sm:h-76 border border-white/10 bg-[#09090e] rounded-2xl shadow-2xl flex flex-col overflow-hidden transform-gpu"
+            >
+              {/* Browser bar */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#050507]">
+                <div className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                </div>
+                <div className="w-40 sm:w-56 h-4 bg-white/5 rounded-md border border-white/10 text-[8px] font-mono text-center text-gray-500 flex items-center justify-center select-none truncate">
+                  researchai.siet.edu/mock-interview
+                </div>
+                <span className="w-3" />
+              </div>
+
+              {/* Browser Body Mockup */}
+              <div className="flex-1 p-4 flex flex-col justify-between font-mono text-left bg-black text-[9px]">
+                <div className="flex justify-between items-center border-b border-white/5 pb-2 mb-2 text-gray-400">
+                  <span>ROUND 01: SYSTEM DESIGN</span>
+                  <span className="text-indigo-400 font-bold">SCORE: 88/100</span>
+                </div>
+
+                {/* Dashboard layout */}
+                <div className="grid grid-cols-3 gap-2 flex-1 items-stretch">
+                  <div className="col-span-2 border border-white/5 rounded-lg p-2 bg-white/[0.02] flex flex-col justify-between">
+                    <span className="text-gray-500">LLM Evaluation:</span>
+                    <span className="text-white text-[8px] line-clamp-2">"Response exhibits excellent understanding of database sharding and caching strategies..."</span>
+                    <span className="text-red-accent font-bold mt-1 text-[8px]">Graded: High Clarity</span>
+                  </div>
+                  <div className="border border-white/5 rounded-lg p-2 bg-white/[0.02] flex flex-col justify-between items-center text-center">
+                    <span className="text-gray-500">SPeech metrics</span>
+                    <span className="text-white text-xs font-bold font-sans">135 WPM</span>
+                    <span className="text-emerald-400 font-bold text-[8px]">Ideal Pace</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-white/5 pt-2 mt-2 flex items-center justify-between text-[8px] text-gray-600">
+                  <span>TS FRONTEND PLATFORM</span>
+                  <span>WEBSPEECH CAPTURE</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Project 03 — 3D Hardware Telemetry / Security Grid */}
+            <motion.div
+              style={{
+                opacity: op3,
+                scale: scale3,
+                rotateX: rotX3,
+                z: z3,
+                transformStyle: 'preserve-3d',
+              }}
+              className="absolute w-72 h-56 sm:w-100 sm:h-76 border border-red-500/20 bg-[#09090e] rounded-2xl shadow-2xl flex flex-col overflow-hidden p-4 transform-gpu"
+            >
+              {/* Telemetry Header */}
+              <div className="flex justify-between items-center border-b border-white/5 pb-3 font-mono text-[9px] text-gray-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-red-accent animate-pulse" />
+                  ESP8266 W-FI SHIELD // PACKET CAPTURE
+                </span>
+                <span>RSSI MONITOR</span>
+              </div>
+
+              {/* Hardware Telemetry Mockup */}
+              <div className="flex-1 grid grid-cols-3 gap-3 my-4 font-mono text-left text-[9px]">
+                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                  <span className="text-gray-500">DEAUTH FLOOD</span>
+                  <span className="text-red-accent font-bold text-base">BLOCKED</span>
+                  <span className="text-[7px] text-gray-500">Circular Buffer active</span>
+                </div>
+
+                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                  <span className="text-gray-500">ROGUE AP</span>
+                  <span className="text-white font-bold text-xs">0 DETECTED</span>
+                  <span className="text-[7px] text-gray-500">RSSI fingerprinting</span>
+                </div>
+
+                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                  <span className="text-gray-500">CHANNEL STATUS</span>
+                  <span className="text-indigo-400 font-bold text-xs">CH 06: SECURE</span>
+                  <span className="text-[7px] text-gray-500">802.11 monitor mode</span>
+                </div>
+              </div>
+
+              {/* Bottom Telemetry Bar */}
+              <div className="border-t border-white/5 pt-3 flex items-center justify-between text-[8px] font-mono text-gray-600">
+                <span>FIRMWARE LAYER: ARDUINO C++</span>
+                <span>CONTROL LAYER: PYTHON</span>
+              </div>
+            </motion.div>
+
+            {/* Project 04 — 3D Product/IoT Dashboard */}
+            <motion.div
+              style={{
+                opacity: op4,
+                scale: scale4,
+                rotateY: rotY4,
+                z: z4,
+                transformStyle: 'preserve-3d',
+              }}
+              className="absolute w-72 h-56 sm:w-100 sm:h-76 border border-white/10 bg-[#09090e] rounded-2xl shadow-2xl flex flex-col overflow-hidden p-4 transform-gpu"
+            >
+              {/* CleanCoin Dashboard Header */}
+              <div className="flex justify-between items-center border-b border-white/5 pb-3 font-mono text-[9px] text-gray-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  CLEANCOIN IoT HUB // ACTIVE
+                </span>
+                <span>DEPOSIT LEDGER</span>
+              </div>
+
+              {/* Eco Ledger Mockup */}
+              <div className="flex-1 grid grid-cols-2 gap-3 my-4 font-mono text-left text-[9px]">
+                {/* Weight sensor calibrated scale */}
+                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                  <span className="text-gray-500">LOAD CELL SCALE</span>
+                  <div>
+                    <span className="text-white font-bold text-lg">0.72</span>
+                    <span className="text-gray-500 ml-1 text-[8px]">KG DEPOSITED</span>
+                  </div>
+                  <span className="text-[7px] text-emerald-400 font-bold">Stable Calibration</span>
+                </div>
+
+                {/* Digital Wallet coins ledger */}
+                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                  <span className="text-gray-500">WALLET BALANCE</span>
+                  <div>
+                    <span className="text-emerald-400 font-bold text-lg">45.0</span>
+                    <span className="text-gray-500 ml-1 text-[8px]">CLEAN COINS</span>
+                  </div>
+                  <span className="text-[7px] text-gray-500">Ledger authenticated</span>
+                </div>
+              </div>
+
+              {/* Bottom Info bar */}
+              <div className="border-t border-white/5 pt-3 flex items-center justify-between text-[8px] font-mono text-gray-600">
+                <span>DATABASE LAYER: FIREBASE</span>
+                <span>API THROTTLING: ACTIVE</span>
+              </div>
+            </motion.div>
+          </div>
+
+        </div>
       </div>
 
-      {/* Fullscreen Case Study Modal */}
+      {/* Case Study Fullscreen Modal */}
       <AnimatePresence>
         {activeProject && (
           <motion.div
@@ -280,7 +494,7 @@ export const Portfolio: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveProject(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-2xl overflow-y-auto"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/95 backdrop-blur-2xl overflow-y-auto"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -353,7 +567,7 @@ export const Portfolio: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </div>
   );
 };
 

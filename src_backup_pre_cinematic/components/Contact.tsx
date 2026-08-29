@@ -1,5 +1,5 @@
-import React, { useState, useRef, FormEvent } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useState, FormEvent } from 'react';
+import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, FileText, ArrowUp } from 'lucide-react';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
@@ -41,19 +41,6 @@ export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end end"]
-  });
-
-  // Scroll link letter slides
-  const line1X = useTransform(scrollYProgress, [0, 0.9], [-100, 0]);
-  const line2X = useTransform(scrollYProgress, [0, 0.9], [100, 0]);
-  const elementsScale = useTransform(scrollYProgress, [0.3, 0.95], [0.92, 1]);
-  const elementsOpacity = useTransform(scrollYProgress, [0.3, 0.9], [0, 1]);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const mailtoSubject = encodeURIComponent(formData.subject || 'Portfolio Inquiry');
@@ -63,36 +50,27 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    <section 
-      ref={containerRef}
-      id="contact" 
-      className="relative w-full py-28 px-6 md:px-12 max-w-7xl mx-auto text-left overflow-hidden bg-[#050507]"
-    >
-      {/* High-Impact Statement */}
-      <div className="mb-24 relative z-10">
-        <p className="text-xs uppercase tracking-[0.25em] text-gray-400 font-mono mb-6 flex items-center gap-2">
+    <section id="contact" className="relative w-full py-24 px-6 md:px-12 max-w-7xl mx-auto text-left">
+      {/* High-Impact Display Statement matching reference blueprint */}
+      <div className="mb-20">
+        <p className="text-xs uppercase tracking-[0.25em] text-gray-400 font-mono mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-red-accent animate-pulse" />
-          <span className="text-red-accent mr-1">05 //</span> Final Scene
+          <span className="text-red-accent mr-1">07</span> Contact &amp; Connect
         </p>
 
-        <h2 className="text-5xl sm:text-8xl lg:text-9.5xl font-extrabold tracking-tighter text-white leading-none font-sans uppercase">
-          <motion.span style={{ x: line1X }} className="block overflow-visible transform-gpu">
-            LET&apos;S BUILD
-          </motion.span>
-          <motion.span style={{ x: line2X }} className="block mt-2 text-right lg:text-center text-red-accent overflow-visible transform-gpu">
+        <h2 className="text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-none font-sans uppercase">
+          LET&apos;S BUILD{' '}
+          <span className="block mt-2">
             SOMETHING{' '}
-            <em className="font-serif-italic font-normal text-white lowercase text-5xl sm:text-8xl lg:text-[7.5rem]">
+            <em className="font-serif-italic font-normal text-red-accent lowercase text-5xl sm:text-8xl lg:text-9xl">
               great.
             </em>
-          </motion.span>
+          </span>
         </h2>
       </div>
 
-      <motion.div 
-        style={{ scale: elementsScale, opacity: elementsOpacity }}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative z-10 transform-gpu"
-      >
-        {/* Left Columns - Channels */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Side — Direct Channels & Socials */}
         <div className="lg:col-span-5 space-y-8">
           <div>
             <h3 className="text-xl font-bold text-white font-sans mb-3">Direct Contact Channels</h3>
@@ -111,7 +89,7 @@ export const Contact: React.FC = () => {
                 <Mail size={18} />
               </div>
               <div className="overflow-hidden">
-                <div className="text-[9px] uppercase text-gray-500">EMAIL CHANNEL</div>
+                <div className="text-[10px] uppercase text-gray-500">EMAIL CHANNEL</div>
                 <div className="text-white font-semibold truncate">ashoksrinivassivakiran.143@gmail.com</div>
               </div>
             </a>
@@ -122,7 +100,7 @@ export const Contact: React.FC = () => {
                 <Phone size={18} />
               </div>
               <div>
-                <div className="text-[9px] uppercase text-gray-500">VOICE CONTACT</div>
+                <div className="text-[10px] uppercase text-gray-500">VOICE CONTACT</div>
                 <div className="text-white font-semibold">+91 95817 20429 / +91 99665 75468</div>
               </div>
             </div>
@@ -133,7 +111,7 @@ export const Contact: React.FC = () => {
                 <MapPin size={18} />
               </div>
               <div>
-                <div className="text-[9px] uppercase text-gray-500">LOCATION &amp; COORDINATES</div>
+                <div className="text-[10px] uppercase text-gray-500">LOCATION &amp; COORDINATES</div>
                 <div className="text-white font-semibold">East Godavari, Andhra Pradesh, India</div>
                 <div className="text-[9px] text-gray-500">[16.7335° N, 82.2144° E]</div>
               </div>
@@ -141,14 +119,14 @@ export const Contact: React.FC = () => {
           </div>
 
           {/* Social Profiles */}
-          <div className="pt-4 border-t border-white/10 flex flex-wrap gap-3">
+          <div className="pt-4 border-t border-white/10 flex flex-wrap gap-4">
             <a
               href="https://github.com/ashok-12700"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-1.5 transition-colors"
+              className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-2 transition-colors"
             >
-              <GithubIcon size={12} />
+              <GithubIcon size={14} />
               <span>GitHub</span>
             </a>
 
@@ -156,9 +134,9 @@ export const Contact: React.FC = () => {
               href="https://linkedin.com/in/ashok-srinivas-siva-kiran-3647a4315"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-1.5 transition-colors"
+              className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/30 flex items-center gap-2 transition-colors"
             >
-              <LinkedinIcon size={12} />
+              <LinkedinIcon size={14} />
               <span>LinkedIn</span>
             </a>
 
@@ -166,22 +144,25 @@ export const Contact: React.FC = () => {
               href="https://drive.google.com/file/d/1uEC2wq-CMXKWZ6HTXe31ysjQf-h56SYw/view?usp=drive_link"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 bg-white text-black rounded-full text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-gray-200 flex items-center gap-1.5 transition-colors"
+              className="px-5 py-2.5 bg-white text-black rounded-full text-xs font-mono font-bold uppercase tracking-widest hover:bg-gray-200 flex items-center gap-2 transition-colors"
             >
-              <FileText size={12} />
+              <FileText size={14} />
               <span>Resume ↗</span>
             </a>
           </div>
         </div>
 
-        {/* Right Columns - Form */}
+        {/* Right Side — High Impact Contact Form */}
         <div className="lg:col-span-7">
-          <form
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             onSubmit={handleSubmit}
-            className="editorial-card p-6 sm:p-8 rounded-3xl space-y-5 relative overflow-hidden"
+            className="editorial-card p-8 rounded-3xl space-y-6 relative overflow-hidden"
           >
             <div>
-              <label className="block text-[9px] uppercase tracking-widest font-mono text-gray-500 mb-2">
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
                 YOUR NAME / ORGANIZATION
               </label>
               <input
@@ -190,12 +171,12 @@ export const Contact: React.FC = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter your name"
-                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-xs text-white focus:outline-none font-sans placeholder-gray-700 transition-colors"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[9px] uppercase tracking-widest font-mono text-gray-500 mb-2">
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
                 EMAIL ADDRESS
               </label>
               <input
@@ -204,12 +185,12 @@ export const Contact: React.FC = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Enter your email"
-                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-xs text-white focus:outline-none font-sans placeholder-gray-700 transition-colors"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[9px] uppercase tracking-widest font-mono text-gray-500 mb-2">
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
                 SUBJECT
               </label>
               <input
@@ -218,12 +199,12 @@ export const Contact: React.FC = () => {
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="Message topic or inquiry"
-                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-xs text-white focus:outline-none font-sans placeholder-gray-700 transition-colors"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[9px] uppercase tracking-widest font-mono text-gray-500 mb-2">
+              <label className="block text-xs uppercase tracking-widest font-mono text-gray-400 mb-2">
                 MESSAGE
               </label>
               <textarea
@@ -232,27 +213,27 @@ export const Contact: React.FC = () => {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Write your project details or message..."
-                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-xs text-white focus:outline-none font-sans placeholder-gray-700 transition-colors resize-none"
+                className="w-full bg-white/5 border border-white/10 focus:border-red-accent/50 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-sans placeholder-gray-600 transition-colors resize-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-white text-black font-mono font-bold text-xs uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 shadow"
+              className="w-full py-4 bg-white text-black font-mono font-bold text-xs uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 shadow-lg"
             >
-              <Send size={12} />
+              <Send size={14} />
               <span>{submitted ? 'Opening Mail Client...' : 'Send Message'}</span>
             </button>
-          </form>
+          </motion.form>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full py-12 px-6 md:px-12 border-t border-white/5 bg-[#030305] text-left">
+    <footer className="w-full py-12 px-6 md:px-12 border-t border-white/10 bg-[#030305] text-left">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-gray-500">
         <div>
           <span className="text-white font-semibold">ASHOK SRINIVAS SIVA KIRAN</span>
@@ -262,10 +243,9 @@ export const Footer: React.FC = () => {
 
         <div className="flex items-center gap-6">
           <a href="#home" className="hover:text-white transition-colors">Home</a>
-          <a href="#education" className="hover:text-white transition-colors">Education</a>
-          <a href="#toolkit" className="hover:text-white transition-colors">Skills</a>
-          <a href="#work" className="hover:text-white transition-colors">Projects</a>
-          <a href="#archive" className="hover:text-white transition-colors">Achievements</a>
+          <a href="#about" className="hover:text-white transition-colors">About</a>
+          <a href="#work" className="hover:text-white transition-colors">Work</a>
+          <a href="#/certificates" className="hover:text-white transition-colors">Certificates</a>
           <a href="#contact" className="hover:text-white transition-colors">Contact</a>
         </div>
 
@@ -274,7 +254,7 @@ export const Footer: React.FC = () => {
           className="p-3 rounded-full bg-white/5 border border-white/10 hover:border-white/30 text-gray-400 hover:text-white transition-colors"
           aria-label="Back to top"
         >
-          <ArrowUp size={14} />
+          <ArrowUp size={16} />
         </a>
       </div>
     </footer>

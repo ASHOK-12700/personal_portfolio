@@ -48,14 +48,6 @@
     color: #ef4444;
   }
 
-  .bg-red-accent {
-    background-color: #ef4444;
-  }
-
-  .border-red-accent {
-    border-color: #ef4444;
-  }
-
   /* Marquee track styling */
   .marquee-track {
     display: flex;

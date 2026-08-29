@@ -3,16 +3,14 @@ import CinematicLayout from './components/CinematicLayout';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
-import Education from './components/Education';
+import Journey from './components/Journey';
 import Skills from './components/Skills';
 import Portfolio from './components/Portfolio';
 import CertificatesPage from './components/CertificatesPage';
 import Archive from './components/Archive';
 import Contact, { Footer } from './components/Contact';
-import Preloader from './components/Preloader';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const [currentPath, setCurrentPath] = useState<string>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
@@ -58,12 +56,12 @@ function App() {
 
   // Track active section for navbar highlight
   useEffect(() => {
-    if (currentPath === '/certificates' || isLoading) return;
+    if (currentPath === '/certificates') return;
 
-    const sections = ['home', 'about', 'education', 'toolkit', 'work', 'archive', 'contact'];
+    const sections = ['home', 'about', 'journey', 'toolkit', 'work', 'archive', 'contact'];
 
     const handleScroll = () => {
-      const scrollPos = window.scrollY + 250;
+      const scrollPos = window.scrollY + 200;
       for (const sId of sections) {
         const el = document.getElementById(sId);
         if (el) {
@@ -79,7 +77,7 @@ function App() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [currentPath, isLoading]);
+  }, [currentPath]);
 
   const navigateHome = () => {
     window.location.hash = '';
@@ -88,31 +86,25 @@ function App() {
   };
 
   return (
-    <>
-      {isLoading ? (
-        <Preloader onComplete={() => setIsLoading(false)} />
+    <CinematicLayout>
+      {currentPath === '/certificates' ? (
+        <CertificatesPage navigateHome={navigateHome} />
       ) : (
-        <CinematicLayout>
-          {currentPath === '/certificates' ? (
-            <CertificatesPage navigateHome={navigateHome} />
-          ) : (
-            <div className="w-full min-h-screen">
-              <Navbar activeSection={activeSection} />
-              <main>
-                <Hero />
-                <About />
-                <Education />
-                <Skills />
-                <Portfolio />
-                <Archive />
-                <Contact />
-              </main>
-              <Footer />
-            </div>
-          )}
-        </CinematicLayout>
+        <div className="w-full min-h-screen">
+          <Navbar activeSection={activeSection} />
+          <main>
+            <Hero />
+            <About />
+            <Journey />
+            <Skills />
+            <Portfolio />
+            <Archive />
+            <Contact />
+          </main>
+          <Footer />
+        </div>
       )}
-    </>
+    </CinematicLayout>
   );
 }
 
