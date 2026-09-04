@@ -1,6 +1,8 @@
 import React, { useState, useRef, FormEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, FileText, ArrowUp } from 'lucide-react';
+import { VoidField } from '@designcodeio/threeui';
+import '@designcodeio/threeui/style.css';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
   <svg
@@ -68,6 +70,11 @@ export const Contact: React.FC = () => {
       id="contact" 
       className="relative w-full py-28 px-6 md:px-12 max-w-7xl mx-auto text-left overflow-hidden bg-[#050507]"
     >
+      {/* Background ThreeUI VoidField for ambient space effect */}
+      <div className="absolute inset-0 opacity-[0.25] pointer-events-none z-0">
+        <VoidField mode="dark" />
+      </div>
+
       {/* High-Impact Statement */}
       <div className="mb-24 relative z-10">
         <p className="text-xs uppercase tracking-[0.25em] text-gray-400 font-mono mb-6 flex items-center gap-2">

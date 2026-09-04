@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Cloud, Code, Layout, Heart } from 'lucide-react';
+import { TopologyField } from '@designcodeio/threeui';
+import '@designcodeio/threeui/style.css';
 
 export const Skills: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -90,6 +92,11 @@ export const Skills: React.FC = () => {
       className="relative w-full py-28 px-6 md:px-12 max-w-7xl mx-auto text-left overflow-hidden bg-[#050507]"
       style={{ perspective: '1600px' }}
     >
+      {/* Background ThreeUI TopologyField */}
+      <div className="absolute inset-0 opacity-[0.14] pointer-events-none z-0">
+        <TopologyField mode="dark" />
+      </div>
+
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-accent/5 rounded-full blur-[160px] pointer-events-none" />
 
@@ -120,7 +127,7 @@ export const Skills: React.FC = () => {
           skewX,
           transformStyle: 'preserve-3d',
         }}
-        className="w-full space-y-6 md:space-y-8 select-none py-10 origin-center transform-gpu"
+        className="w-full space-y-6 md:space-y-8 select-none py-10 origin-center transform-gpu relative z-10"
       >
         {categories.map((cat, catIdx) => {
           const isRev = cat.direction === 'reverse';

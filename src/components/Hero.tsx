@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Play, Shield, Award, Cpu, GraduationCap } from 'lucide-react';
+import { CloudField } from '@designcodeio/threeui';
+import '@designcodeio/threeui/style.css';
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -109,11 +111,11 @@ export const Hero: React.FC = () => {
           </a>
 
           <a
-            href="#journey"
+            href="#education"
             className="group px-8 py-4 border border-white/15 text-white font-semibold text-xs uppercase tracking-widest font-mono rounded-full hover:bg-white/5 hover:border-white/30 transition-all duration-300 flex items-center gap-2"
           >
             <Play size={12} className="fill-current text-red-accent" />
-            <span>See My Journey</span>
+            <span>See My Education</span>
           </a>
         </motion.div>
       </motion.div>
@@ -151,11 +153,16 @@ export const Hero: React.FC = () => {
           style={{ y: photoY, z: photoZ, rotateY: photoRotate }}
           className="md:col-span-6 flex justify-center items-center py-4 relative transform-gpu"
         >
-          {/* Arch Backdrop SVG Line */}
+          {/* Arch Backdrop with embedded ThreeUI CloudField */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-68 h-84 sm:w-76 sm:h-100 rounded-t-full border border-white/10 bg-white/[0.01]" />
+            <div className="w-68 h-84 sm:w-76 sm:h-100 rounded-t-full border border-white/10 bg-black/40 overflow-hidden relative">
+              <div className="absolute inset-0 opacity-[0.35]">
+                <CloudField mode="dark" />
+              </div>
+            </div>
           </div>
 
+          {/* Floating Portrait Image with 3D layers styling */}
           <div className="relative w-58 h-76 sm:w-66 sm:h-84 rounded-t-full overflow-hidden border border-white/15 shadow-2xl bg-black/60 group">
             <img
               src="https://i.postimg.cc/SND65KHx/my-photo.jpg"

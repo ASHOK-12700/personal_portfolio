@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Smartphone, Cpu, ShieldCheck, Trash2, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
+import { DataField } from '@designcodeio/threeui';
+import '@designcodeio/threeui/style.css';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
   <svg
@@ -176,13 +178,14 @@ export const Portfolio: React.FC = () => {
           <div className="lg:col-span-6 flex flex-col justify-between h-auto lg:h-[75%] border-b lg:border-b-0 lg:border-r border-white/5 pb-6 lg:pb-0 lg:pr-10 relative z-20 bg-[#050507]/90">
             {projects.map((proj, idx) => {
               const trans = pTransforms[idx];
+              const isProjActive = scrollYProgress.get() >= (idx * 0.25) && scrollYProgress.get() < ((idx + 1) * 0.25);
               return (
                 <motion.div
                   key={proj.id}
                   style={{
                     opacity: trans.op,
                     y: trans.y,
-                    pointerEvents: scrollYProgress.get() >= (idx * 0.25) && scrollYProgress.get() < ((idx + 1) * 0.25) ? 'auto' : 'none',
+                    pointerEvents: isProjActive ? 'auto' : 'none',
                   }}
                   className="absolute inset-x-0 top-0 pr-0 lg:pr-6"
                 >
@@ -249,7 +252,7 @@ export const Portfolio: React.FC = () => {
                       <span>Code</span>
                     </a>
 
-                    {proj.live && (
+                    {proj.live && proj.live !== "#" ? (
                       <a
                         href={proj.live}
                         target="_blank"
@@ -259,6 +262,14 @@ export const Portfolio: React.FC = () => {
                         <ExternalLink size={12} />
                         <span>Live</span>
                       </a>
+                    ) : (
+                      <button
+                        disabled
+                        type="button"
+                        className="px-4 py-2.5 border border-white/5 text-gray-600 font-mono text-[10px] uppercase tracking-widest rounded-full cursor-not-allowed"
+                      >
+                        <span>Demo (Offline)</span>
+                      </button>
                     )}
                   </div>
                 </motion.div>
@@ -384,7 +395,7 @@ export const Portfolio: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Project 03 — 3D Hardware Telemetry / Security Grid */}
+            {/* Project 03 — 3D Hardware Telemetry / ThreeUI DataField */}
             <motion.div
               style={{
                 opacity: op3,
@@ -395,30 +406,35 @@ export const Portfolio: React.FC = () => {
               }}
               className="absolute w-72 h-56 sm:w-100 sm:h-76 border border-red-500/20 bg-[#09090e] rounded-2xl shadow-2xl flex flex-col overflow-hidden p-4 transform-gpu"
             >
+              {/* Live WebGL DataField Background */}
+              <div className="absolute inset-0 opacity-[0.25] pointer-events-none z-0">
+                <DataField mode="dark" />
+              </div>
+
               {/* Telemetry Header */}
-              <div className="flex justify-between items-center border-b border-white/5 pb-3 font-mono text-[9px] text-gray-500">
+              <div className="flex justify-between items-center border-b border-white/5 pb-3 font-mono text-[9px] text-gray-500 relative z-10">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-red-accent animate-pulse" />
-                  ESP8266 W-FI SHIELD // PACKET CAPTURE
+                  ESP8266 WI-FI SHIELD // PACKET CAPTURE
                 </span>
                 <span>RSSI MONITOR</span>
               </div>
 
               {/* Hardware Telemetry Mockup */}
-              <div className="flex-1 grid grid-cols-3 gap-3 my-4 font-mono text-left text-[9px]">
-                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+              <div className="flex-1 grid grid-cols-3 gap-3 my-4 font-mono text-left text-[9px] relative z-10">
+                <div className="border border-white/10 rounded-xl p-3 bg-black/80 flex flex-col justify-between">
                   <span className="text-gray-500">DEAUTH FLOOD</span>
                   <span className="text-red-accent font-bold text-base">BLOCKED</span>
                   <span className="text-[7px] text-gray-500">Circular Buffer active</span>
                 </div>
 
-                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                <div className="border border-white/10 rounded-xl p-3 bg-black/80 flex flex-col justify-between">
                   <span className="text-gray-500">ROGUE AP</span>
                   <span className="text-white font-bold text-xs">0 DETECTED</span>
                   <span className="text-[7px] text-gray-500">RSSI fingerprinting</span>
                 </div>
 
-                <div className="border border-white/10 rounded-xl p-3 bg-white/[0.01] flex flex-col justify-between">
+                <div className="border border-white/10 rounded-xl p-3 bg-black/80 flex flex-col justify-between">
                   <span className="text-gray-500">CHANNEL STATUS</span>
                   <span className="text-indigo-400 font-bold text-xs">CH 06: SECURE</span>
                   <span className="text-[7px] text-gray-500">802.11 monitor mode</span>
@@ -426,7 +442,7 @@ export const Portfolio: React.FC = () => {
               </div>
 
               {/* Bottom Telemetry Bar */}
-              <div className="border-t border-white/5 pt-3 flex items-center justify-between text-[8px] font-mono text-gray-600">
+              <div className="border-t border-white/5 pt-3 flex items-center justify-between text-[8px] font-mono text-gray-600 relative z-10">
                 <span>FIRMWARE LAYER: ARDUINO C++</span>
                 <span>CONTROL LAYER: PYTHON</span>
               </div>
@@ -539,7 +555,7 @@ export const Portfolio: React.FC = () => {
 
                 <div>
                   <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest">
-                    KEY CAPABILITIES
+                    KEY FEATURE DETAILED BREAKDOWN
                   </h4>
                   <ul className="space-y-2">
                     {activeProject.highlights.map((h, idx) => (
