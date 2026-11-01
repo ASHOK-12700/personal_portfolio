@@ -612,7 +612,7 @@ function roundRectPath`;
    The document sees the pointer arrive reliably, but a sandboxed cross-process
    frame is not guaranteed the matching leave — so the host watches for that
    edge and posts it in, and the two signals together decide the state. */
-const GALLERY_HEADING_CLOCK = `var tNow = 0, playing = true, hovering = false, rate = 0, vel = 0, settled = false, last = performance.now();
+const GALLERY_HEADING_CLOCK = `var tNow = 0, playing = true, hovering = true, rate = 1, vel = 0, settled = false, last = performance.now();
 
 function setHover(state){
   if (hovering === state) return;

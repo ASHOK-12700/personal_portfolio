@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Play, Shield, Award, Cpu, GraduationCap } from 'lucide-react';
 import { CloudField } from '@designcodeio/threeui';
@@ -6,6 +6,18 @@ import '@designcodeio/threeui/style.css';
 
 export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePos({ x: 0, y: 0 });
+  };
 
   // Hook into scroll progress of the hero section itself
   const { scrollYProgress } = useScroll({
@@ -14,25 +26,27 @@ export const Hero: React.FC = () => {
   });
 
   // 3D parallax scroll translations
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const textScale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 140]);
+  const textScale = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const leftStatsY = useTransform(scrollYProgress, [0, 1], [0, -180]);
   const rightStatsY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   
-  const photoY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const photoZ = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const photoRotate = useTransform(scrollYProgress, [0, 1], [0, -6]);
+  const photoY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const photoZ = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const photoScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
 
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, 160]);
 
   return (
     <section
       ref={heroRef}
       id="home"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative min-h-[110vh] w-full flex flex-col justify-between pt-36 pb-20 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden text-left"
-      style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
+      style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
     >
       {/* Background Glows with slow parallax scrolling */}
       <motion.div 
@@ -41,7 +55,7 @@ export const Hero: React.FC = () => {
       />
       <motion.div 
         style={{ y: bgY }}
-        className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-red-600/5 rounded-full blur-[140px] pointer-events-none z-0" 
+        className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-red-600/10 rounded-full blur-[140px] pointer-events-none z-0" 
       />
 
       {/* Decorative Technical Micro Grid Marks */}
@@ -120,14 +134,19 @@ export const Hero: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* Stage Row with Portrait Arch & Key Highlights */}
+      {/* Stage Row with Interactive 3D Portrait Frame & Key Highlights */}
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center my-16">
         {/* Left Side Stats */}
         <motion.div 
           style={{ y: leftStatsY }}
-          className="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-4"
+          animate={{
+            rotateY: mousePos.x * -10,
+            rotateX: mousePos.y * 10,
+          }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-4 transform-gpu"
         >
-          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4 backdrop-blur-md">
             <div className="p-3 rounded-xl bg-white/5 text-red-accent border border-white/10">
               <Cpu size={20} />
             </div>
@@ -137,7 +156,7 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4 backdrop-blur-md">
             <div className="p-3 rounded-xl bg-white/5 text-indigo-400 border border-white/10">
               <Shield size={20} />
             </div>
@@ -148,31 +167,49 @@ export const Hero: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Center Stage Portrait Frame */}
+        {/* Center Stage Portrait Frame with Physical Spatial Layers */}
         <motion.div 
-          style={{ y: photoY, z: photoZ, rotateY: photoRotate }}
+          style={{ y: photoY, z: photoZ, scale: photoScale }}
+          animate={{
+            rotateY: mousePos.x * 18,
+            rotateX: mousePos.y * -18,
+          }}
+          transition={{ type: 'spring', stiffness: 180, damping: 18 }}
           className="md:col-span-6 flex justify-center items-center py-4 relative transform-gpu"
         >
           {/* Arch Backdrop with embedded ThreeUI CloudField */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-68 h-84 sm:w-76 sm:h-100 rounded-t-full border border-white/10 bg-black/40 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-[0.35]">
+          <div 
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ transform: 'translateZ(-40px)' }}
+          >
+            <div className="w-72 h-92 sm:w-84 sm:h-[26rem] rounded-t-full border border-white/15 bg-black/60 overflow-hidden relative shadow-2xl">
+              <div className="absolute inset-0 opacity-[0.45]">
                 <CloudField mode="dark" />
               </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
             </div>
           </div>
 
-          {/* Floating Portrait Image with 3D layers styling */}
-          <div className="relative w-58 h-76 sm:w-66 sm:h-84 rounded-t-full overflow-hidden border border-white/15 shadow-2xl bg-black/60 group">
+          {/* Floating Enhanced Portrait Image with layered spatial elevation */}
+          <div 
+            className="relative w-64 h-84 sm:w-76 sm:h-[24rem] rounded-t-full overflow-hidden border border-white/20 shadow-2xl bg-black/80 group transform-gpu transition-shadow duration-500 hover:shadow-red-accent/15"
+            style={{ transform: 'translateZ(30px)' }}
+          >
             <img
-              src="https://i.postimg.cc/SND65KHx/my-photo.jpg"
+              src="/ashok-hero-portrait.png"
               alt="Ashok Srinivas Siva Kiran"
-              className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+              className="w-full h-full object-cover object-top filter brightness-[1.02] contrast-[1.05] group-hover:scale-105 transition-all duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-70" />
-            <div className="absolute bottom-5 left-0 w-full text-center px-4">
-              <p className="text-xs font-mono font-bold text-white tracking-widest uppercase">Ashok Srinivas</p>
-              <p className="text-[10px] font-mono text-gray-400">DevOps &amp; Cloud Specialist</p>
+            {/* Cinematic Gradient Vignette */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-transparent to-transparent opacity-85" />
+            
+            {/* Ambient Lighting Edge Glow */}
+            <div className="absolute inset-0 border border-white/10 rounded-t-full pointer-events-none" />
+
+            {/* Name Tag */}
+            <div className="absolute bottom-5 left-0 w-full text-center px-4 z-10">
+              <p className="text-xs font-mono font-bold text-white tracking-[0.2em] uppercase drop-shadow">Ashok Srinivas</p>
+              <p className="text-[10px] font-mono text-red-accent font-semibold tracking-wider mt-0.5">DevOps &amp; Cloud Specialist</p>
             </div>
           </div>
         </motion.div>
@@ -180,9 +217,14 @@ export const Hero: React.FC = () => {
         {/* Right Side Stats */}
         <motion.div 
           style={{ y: rightStatsY }}
-          className="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-4"
+          animate={{
+            rotateY: mousePos.x * -10,
+            rotateX: mousePos.y * 10,
+          }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-4 transform-gpu"
         >
-          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4 backdrop-blur-md">
             <div className="p-3 rounded-xl bg-white/5 text-amber-400 border border-white/10">
               <Award size={20} />
             </div>
@@ -192,7 +234,7 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4">
+          <div className="editorial-card p-4 rounded-2xl flex items-center gap-4 backdrop-blur-md">
             <div className="p-3 rounded-xl bg-white/5 text-emerald-400 border border-white/10">
               <GraduationCap size={20} />
             </div>

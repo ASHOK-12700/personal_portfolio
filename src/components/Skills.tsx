@@ -119,6 +119,42 @@ export const Skills: React.FC = () => {
         </p>
       </div>
 
+      {/* 3D Spatial Grid Environment */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 relative z-10">
+        {categories.map((cat, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.03, rotateY: 5, rotateX: -5, translateZ: 30 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="editorial-card p-6 rounded-3xl relative overflow-hidden group transform-gpu cursor-pointer"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-red-accent group-hover:scale-110 transition-transform">
+                <cat.icon size={18} />
+              </div>
+              <h3 className="text-sm font-bold text-white font-sans tracking-tight">
+                {cat.title}
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 pt-2">
+              {cat.skills.map((skill, sIdx) => (
+                <span
+                  key={sIdx}
+                  className="text-[10px] font-mono text-gray-300 px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg group-hover:border-white/20 transition-colors"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
       {/* 3D Angled Marquee Container */}
       <motion.div
         style={{

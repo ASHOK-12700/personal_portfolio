@@ -87,7 +87,6 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
               hue={0}
               saturation={1.00}
               brightness={1.00}
-              style={{ pointerEvents: 'none' }}
             />
           </div>
 

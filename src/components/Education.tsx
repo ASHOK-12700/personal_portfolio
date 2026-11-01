@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 
 interface Chapter {
   num: string;
@@ -12,6 +12,7 @@ interface Chapter {
 
 export const Education: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [activeChapter, setActiveChapter] = useState(0);
 
   // Track the scroll progress of the entire section which will have 300vh height
   const { scrollYProgress } = useScroll({
@@ -19,30 +20,40 @@ export const Education: React.FC = () => {
     offset: ["start start", "end end"],
   });
 
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    if (latest < 0.35) {
+      setActiveChapter(0);
+    } else if (latest < 0.68) {
+      setActiveChapter(1);
+    } else {
+      setActiveChapter(2);
+    }
+  });
+
   const chapters: Chapter[] = [
     {
       num: "01",
-      year: '2016 – 2021',
-      title: 'Secondary Foundations',
-      place: 'ZPHS High School · G. Vemavaram',
-      story: 'Built foundational academic discipline and problem-solving skills in mathematics and physical sciences, laying the groundwork for a technical path.',
-      bridge: 'The initial step before entering computing.',
+      year: '2018 – 2019',
+      title: '10th Secondary School Certificate (SSC)',
+      place: 'Narayana High School · 9.8 CGPA',
+      story: 'Built foundational academic discipline and problem-solving skills in mathematics and physical sciences, achieving a 9.8 CGPA score.',
+      bridge: 'Foundational baseline prior to advanced science & computing.',
     },
     {
       num: "02",
-      year: '2021 – 2023',
-      title: 'Pre-Engineering Mathematics & Physics',
-      place: 'VVS Narayana Raju Junior College',
-      story: 'Completed Intermediate Education (MPC) with a strong focus on advanced algebra, calculus, and mechanics, preparing for formal computer science engineering.',
-      bridge: 'Developing the analytical mindset required for complex systems.',
+      year: '2019 – 2021',
+      title: 'Intermediate (MPC)',
+      place: 'Sri Chaitanya Junior College · 96.4%',
+      story: 'Completed Intermediate Education (Mathematics, Physics, Chemistry) under Board of Intermediate Education AP, securing 96.4%.',
+      bridge: 'Developing the mathematical mindset required for complex computing.',
     },
     {
       num: "03",
-      year: '2023 – Present',
+      year: '2021 – 2025',
       title: 'B.Tech in Computer Science Engineering',
-      place: 'Srinivasa Institute of Engineering & Technology (SIET)',
-      story: 'Pursuing B.Tech CSE (3rd Year). Mastered core algorithms, data structures, operating systems, computer networking, and cloud system architectures.',
-      bridge: 'Translating computer science theory into real software.',
+      place: 'Srinivasa Institute of Engineering & Technology (SIET) · 7.62 CGPA',
+      story: 'Pursuing B.Tech CSE (3rd Year). Specializing in cloud system infrastructure, automated CI/CD pipelines, IoT defense firmware, and AI voice assistants.',
+      bridge: 'Translating computer science theory into production software.',
     },
   ];
 
@@ -131,16 +142,16 @@ export const Education: React.FC = () => {
               </div>
               <div className="font-mono text-[10px] space-y-4 text-gray-500">
                 <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full border border-red-accent ${scrollYProgress.get() < 0.33 ? 'bg-red-accent' : ''}`} />
-                  <span>CHAPTER 01</span>
+                  <span className={`w-2 h-2 rounded-full border border-red-accent transition-colors duration-300 ${activeChapter === 0 ? 'bg-red-accent' : ''}`} />
+                  <span className={activeChapter === 0 ? 'text-white font-semibold transition-colors duration-300' : 'transition-colors duration-300'}>CHAPTER 01</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full border border-red-accent ${(scrollYProgress.get() >= 0.33 && scrollYProgress.get() < 0.66) ? 'bg-red-accent' : ''}`} />
-                  <span>CHAPTER 02</span>
+                  <span className={`w-2 h-2 rounded-full border border-red-accent transition-colors duration-300 ${activeChapter === 1 ? 'bg-red-accent' : ''}`} />
+                  <span className={activeChapter === 1 ? 'text-white font-semibold transition-colors duration-300' : 'transition-colors duration-300'}>CHAPTER 02</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full border border-red-accent ${scrollYProgress.get() >= 0.66 ? 'bg-red-accent' : ''}`} />
-                  <span>CHAPTER 03</span>
+                  <span className={`w-2 h-2 rounded-full border border-red-accent transition-colors duration-300 ${activeChapter === 2 ? 'bg-red-accent' : ''}`} />
+                  <span className={activeChapter === 2 ? 'text-white font-semibold transition-colors duration-300' : 'transition-colors duration-300'}>CHAPTER 03</span>
                 </div>
               </div>
             </div>
@@ -164,7 +175,7 @@ export const Education: React.FC = () => {
                     z: trans.z,
                     transformStyle: 'preserve-3d',
                   }}
-                  className="absolute w-full max-w-2xl bg-[#09090e]/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl transition-shadow duration-500 hover:shadow-red-accent/5"
+                  className="absolute w-full max-w-2xl bg-[#09090e]/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl transition-shadow duration-500 hover:shadow-red-accent/5 max-h-[85vh] overflow-y-auto"
                 >
                   {/* Subtle Glow */}
                   <div className="absolute top-0 right-0 w-48 h-48 bg-red-accent/5 rounded-full blur-[80px] pointer-events-none" />

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 import { ExternalLink, Smartphone, Cpu, ShieldCheck, Trash2, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
 import { DataField } from '@designcodeio/threeui';
 import '@designcodeio/threeui/style.css';
@@ -28,12 +28,16 @@ interface Project {
   title: string;
   subtitle: string;
   description: string;
+  problem: string;
+  solution: string;
   tags: string[];
   icon: React.ElementType;
   github: string;
   live?: string;
   highlights: string[];
   architecture: string;
+  challenges: string;
+  outcome: string;
 }
 
 const projects: Project[] = [
@@ -45,6 +49,10 @@ const projects: Project[] = [
     subtitle: 'Personal Android Voice Assistant & Automation Agent',
     description:
       'A personal Android voice assistant engineered natively in Kotlin to perform daily tasks through natural voice commands. Inspired by modern AI assistants, Max Assistant provides app control, calling/messaging automation, reminders, system routines, and intelligent intent parsing.',
+    problem:
+      'Navigating multiple device apps manually during driving or multi-tasking is inefficient and unsafe. Existing cloud voice assistants often exhibit latency or fail when operating system-level native device controls without an internet connection.',
+    solution:
+      'Engineered a native Android Kotlin application utilizing local SpeechRecognizer pipelines for instant wake-word capturing, paired with on-device intent parsing and cloud LLM fallback for executing system actions.',
     tags: ['Android Native', 'Kotlin', 'SpeechRecognizer', 'Text-to-Speech (TTS)', 'Wake-Word Engine', 'AI Intent Parser'],
     icon: Smartphone,
     github: 'https://github.com/ashok-12700',
@@ -56,6 +64,10 @@ const projects: Project[] = [
     ],
     architecture:
       'Built as a native Android application using Kotlin. Leverages Android SpeechRecognizer for on-device voice capturing, TextToSpeech for verbal feedback, BroadcastReceivers for system automation, and an intent parsing engine to execute background device actions.',
+    challenges:
+      'Managing background thread lifecycles and microphone permission streams without triggering system memory pressure or battery drain.',
+    outcome:
+      'Achieved hands-free native device task execution with under 150ms local intent response time.',
   },
   {
     id: 'research-ai',
@@ -65,6 +77,10 @@ const projects: Project[] = [
     subtitle: 'AI Interview Simulator & Candidate Evaluator',
     description:
       'An AI-powered interview preparation platform designed to simulate realistic technical and HR interview rounds. Candidates practice domain-specific questions, receive instant speech clarity and sentiment feedback, get technical answers graded, and track their progress over time.',
+    problem:
+      'Job candidates lack accessible, objective real-time feedback on speech clarity, technical answer completeness, and confidence pacing before high-stakes interview rounds.',
+    solution:
+      'Architected a web application integrating Web Speech API audio processing with LLM prompt orchestration to score verbal answers dynamically and generate tailored hints.',
     tags: ['React.js', 'TypeScript', 'Tailwind CSS', 'Speech Analysis', 'LLM Prompting', 'Interview Automation'],
     icon: Cpu,
     github: 'https://github.com/ashok-12700',
@@ -76,6 +92,10 @@ const projects: Project[] = [
     ],
     architecture:
       'Architected with a React + TypeScript single-page application frontend. Integrates dynamic LLM prompt orchestration for adaptive question flows, combined with Web Speech API for real-time speech-to-text processing and structured candidate evaluation.',
+    challenges:
+      'Handling live audio stream transcriptions without losing context during long candidate responses.',
+    outcome:
+      'Delivered instant scoring breakdown with speech pacing (WPM) and technical accuracy evaluation.',
   },
   {
     id: 'wifi-shield',
@@ -85,6 +105,10 @@ const projects: Project[] = [
     subtitle: '1st Prize Winner · VSM College Project Expo',
     description:
       'A low-cost, compact IoT module built on ESP8266 NodeMCU that actively detects and mitigates public Wi-Fi security threats in real time. Analyzing IEEE 802.11 management frames, it protects user privacy against Deauth attacks, Rogue Access Points (Evil Twins), and Beacon floods.',
+    problem:
+      'Public Wi-Fi networks are vulnerable to deauthentication packet injection, man-in-the-middle sniffing, and fake access points that steal unencrypted user credentials.',
+    solution:
+      'Designed an embedded ESP8266 hardware module running custom C++ packet filtering firmware to capture raw 802.11 frames, identify deauth floods, and alert users on OLED telemetry.',
     tags: ['Python', 'ESP8266 NodeMCU', 'Arduino C++', 'IEEE 802.11 Protocols', 'Network Defense', 'Packet Filtering'],
     icon: ShieldCheck,
     github: 'https://github.com/ashok-12700',
@@ -96,6 +120,10 @@ const projects: Project[] = [
     ],
     architecture:
       'Hardware layer utilizes ESP8266 NodeMCU running customized C++ firmware for low-level packet capture, communicating with a Python control client. Intercepts management frames directly at MAC layer with hardware interrupt handlers.',
+    challenges:
+      'Operating within ESP8266 restricted 80KB RAM while processing high-throughput 802.11 frame bursts.',
+    outcome:
+      'Awarded 1st Prize at VSM Project Expo and 2nd Prize at Aditya College Expo for hardware network defense.',
   },
   {
     id: 'clean-coin',
@@ -105,6 +133,10 @@ const projects: Project[] = [
     subtitle: 'CleanCoin Recycling App & IoT Hub',
     description:
       'An eco-friendly system incentivizing responsible waste recycling through digital currency. Integrating smart weight-sensing dustbins with a mobile React web catalog, it tracks deposit weights in real time and allocates digital coins to user ledgers.',
+    problem:
+      'Lack of tangible motivation leads to low urban recycling rates, while municipal waste systems lack real-time bin weight telemetry.',
+    solution:
+      'Created an IoT load-cell smart bin paired with a React digital wallet platform that calculates waste weight and credits user accounts with CleanCoin rewards.',
     tags: ['React.js', 'Tailwind CSS', 'JavaScript API', 'Firebase Cloud', 'IoT Load Cell Sensors'],
     icon: Trash2,
     github: 'https://github.com/ashok-12700',
@@ -117,12 +149,17 @@ const projects: Project[] = [
     ],
     architecture:
       'Multi-tier IoT system using Arduino load-cell weight sensors communicating over REST APIs with a React.js client web app backed by Firebase Cloud Services.',
+    challenges:
+      'Preventing weight manipulation or rapid duplicate deposit spoofing at the sensor layer.',
+    outcome:
+      'Successfully synchronized hardware weight scale readouts to Firebase cloud ledger with live web catalog interface.',
   },
 ];
 
 export const Portfolio: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
 
   // Hook into scroll progress of the entire portfolio section (height 400vh)
   const { scrollYProgress } = useScroll({
@@ -130,8 +167,10 @@ export const Portfolio: React.FC = () => {
     offset: ["start start", "end end"],
   });
 
-  // Calculate active project index from scroll progress
-  const activeIdx = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [0, 0, 1, 2, 3]);
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const idx = Math.min(Math.floor(latest * 4), projects.length - 1);
+    setCurrentProjectIndex(idx);
+  });
 
   // Project 01 (Max Assistant) Transforms
   const op1 = useTransform(scrollYProgress, [0, 0.2, 0.26], [1, 1, 0]);
@@ -175,10 +214,10 @@ export const Portfolio: React.FC = () => {
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full pt-16 pb-12">
           
           {/* Left Side Details Column */}
-          <div className="lg:col-span-6 flex flex-col justify-between h-auto lg:h-[75%] border-b lg:border-b-0 lg:border-r border-white/5 pb-6 lg:pb-0 lg:pr-10 relative z-20 bg-[#050507]/90">
+          <div className="lg:col-span-6 flex flex-col justify-between min-h-[460px] sm:min-h-[420px] lg:min-h-0 lg:h-[75%] border-b lg:border-b-0 lg:border-r border-white/5 pb-6 lg:pb-0 lg:pr-10 relative z-20 bg-[#050507]/90">
             {projects.map((proj, idx) => {
               const trans = pTransforms[idx];
-              const isProjActive = scrollYProgress.get() >= (idx * 0.25) && scrollYProgress.get() < ((idx + 1) * 0.25);
+              const isProjActive = currentProjectIndex === idx;
               return (
                 <motion.div
                   key={proj.id}
@@ -242,17 +281,19 @@ export const Portfolio: React.FC = () => {
                       <ArrowUpRight size={12} />
                     </button>
 
-                    <a
-                      href={proj.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2.5 border border-white/15 text-gray-400 hover:text-white hover:border-white/30 font-mono text-[10px] uppercase tracking-widest rounded-full transition-all flex items-center gap-1.5"
-                    >
-                      <GithubIcon size={12} />
-                      <span>Code</span>
-                    </a>
+                    {proj.github && proj.github !== '#' && (
+                      <a
+                        href={proj.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2.5 border border-white/15 text-gray-400 hover:text-white hover:border-white/30 font-mono text-[10px] uppercase tracking-widest rounded-full transition-all flex items-center gap-1.5"
+                      >
+                        <GithubIcon size={12} />
+                        <span>Code</span>
+                      </a>
+                    )}
 
-                    {proj.live && proj.live !== "#" ? (
+                    {proj.live && proj.live !== '#' && (
                       <a
                         href={proj.live}
                         target="_blank"
@@ -262,29 +303,21 @@ export const Portfolio: React.FC = () => {
                         <ExternalLink size={12} />
                         <span>Live</span>
                       </a>
-                    ) : (
-                      <button
-                        disabled
-                        type="button"
-                        className="px-4 py-2.5 border border-white/5 text-gray-600 font-mono text-[10px] uppercase tracking-widest rounded-full cursor-not-allowed"
-                      >
-                        <span>Demo (Offline)</span>
-                      </button>
                     )}
                   </div>
                 </motion.div>
               );
             })}
 
-            {/* Static Bottom indicator placeholder */}
+            {/* Reactive Project Scene indicator */}
             <div className="mt-auto pt-6 text-[10px] font-mono text-gray-500 flex items-center justify-between relative z-10">
               <span>SELECTED PROJECTS // FOUR SCENES</span>
               <div className="flex gap-1.5">
                 {[0, 1, 2, 3].map((num) => (
                   <span
                     key={num}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      Math.floor(activeIdx.get()) === num ? 'bg-red-accent' : 'bg-white/10'
+                    className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                      currentProjectIndex === num ? 'bg-red-accent' : 'bg-white/10'
                     }`}
                   />
                 ))}
@@ -536,26 +569,55 @@ export const Portfolio: React.FC = () => {
               </h3>
               <p className="text-xs font-mono text-gray-400 mb-6">{activeProject.subtitle}</p>
 
-              <div className="space-y-6 text-sm text-gray-300 font-light leading-relaxed">
+              <div className="space-y-6 text-sm text-gray-300 font-light leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
                 <div>
-                  <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest">
-                    OVERVIEW &amp; OBJECTIVE
+                  <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest text-red-accent">
+                    01 // PROJECT OVERVIEW
                   </h4>
                   <p>{activeProject.description}</p>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 className="text-[10px] uppercase font-mono font-bold text-red-accent mb-1 tracking-widest">
+                      PROBLEM STATEMENT
+                    </h4>
+                    <p className="text-xs text-gray-300 leading-relaxed">{activeProject.problem}</p>
+                  </div>
+
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 className="text-[10px] uppercase font-mono font-bold text-emerald-400 mb-1 tracking-widest">
+                      ENGINEERING SOLUTION
+                    </h4>
+                    <p className="text-xs text-gray-300 leading-relaxed">{activeProject.solution}</p>
+                  </div>
+                </div>
+
                 <div>
                   <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest">
-                    SYSTEM ARCHITECTURE
+                    02 // SYSTEM ARCHITECTURE
                   </h4>
-                  <p className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xs text-gray-300">
+                  <p className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xs text-gray-300 leading-relaxed">
                     {activeProject.architecture}
                   </p>
                 </div>
 
                 <div>
                   <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest">
-                    KEY FEATURE DETAILED BREAKDOWN
+                    03 // VERIFIED TECH STACK
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {activeProject.tags.map((tag, tIdx) => (
+                      <span key={tIdx} className="text-xs font-mono text-white px-3 py-1 bg-white/5 border border-white/10 rounded-lg">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs uppercase font-mono font-bold text-white mb-2 tracking-widest">
+                    04 // KEY FEATURES &amp; HIGHLIGHTS
                   </h4>
                   <ul className="space-y-2">
                     {activeProject.highlights.map((h, idx) => (
@@ -566,18 +628,58 @@ export const Portfolio: React.FC = () => {
                     ))}
                   </ul>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 className="text-[10px] uppercase font-mono font-bold text-amber-400 mb-1 tracking-widest">
+                      KEY CHALLENGES OVERCOME
+                    </h4>
+                    <p className="text-xs text-gray-300 leading-relaxed">{activeProject.challenges}</p>
+                  </div>
+
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 className="text-[10px] uppercase font-mono font-bold text-indigo-400 mb-1 tracking-widest">
+                      MEASURABLE OUTCOME
+                    </h4>
+                    <p className="text-xs text-gray-300 leading-relaxed">{activeProject.outcome}</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-end gap-4">
-                <a
-                  href={activeProject.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-2.5 bg-white text-black font-semibold text-xs font-mono uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2"
+              <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveProject(null)}
+                  className="px-5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 font-mono text-xs uppercase tracking-widest rounded-full"
                 >
-                  <GithubIcon size={14} />
-                  <span>Source Code ↗</span>
-                </a>
+                  Close Case Study
+                </button>
+
+                <div className="flex items-center gap-3">
+                  {activeProject.github && activeProject.github !== '#' && (
+                    <a
+                      href={activeProject.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-white text-black font-semibold text-xs font-mono uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2"
+                    >
+                      <GithubIcon size={14} />
+                      <span>GitHub Code</span>
+                    </a>
+                  )}
+
+                  {activeProject.live && activeProject.live !== '#' && (
+                    <a
+                      href={activeProject.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-red-accent text-white font-semibold text-xs font-mono uppercase tracking-widest rounded-full hover:bg-red-600 transition-colors flex items-center gap-2"
+                    >
+                      <ExternalLink size={14} />
+                      <span>Live App</span>
+                    </a>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
